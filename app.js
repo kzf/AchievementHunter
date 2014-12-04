@@ -3,18 +3,21 @@ $(function() {
 	var Alerts = {
 		alerts: [],
 		el: $(".ach-alerts"),
-		addAlert: function(text) {
-			console.log(text);
-			var b = $("<div>").addClass("alert").text("You pressed it!");
+		addAlert: function(ach) {
+			var b = $("<div>").addClass("alert").addClass("achieved");
+			var achTitle = $("<h3>").text(ach.title).addClass("alert-title");
+			var achDesc = $("<span>").text(ach.desc).addClass("alert-desc");
+			var achLabel = $("<span>").html(ach.label).addClass("ach-label").addClass("pull-left");
+			b.append(achLabel).append(achTitle).append(achDesc);
 			if (this.alerts.length === 3) {
 				var a = this.alerts.pop();
-				a.fadeOut();
+				a.addClass("alert-hide");
 			}
 			this.alerts.unshift(b);
 			this.el.append(b);
 			setTimeout(function() {
 				b.remove()
-			}, 3000);
+			}, 5000);
 		}
 	}
 
@@ -23,6 +26,18 @@ $(function() {
   });
   $("#lighten").click(function() {
   	$("body, main").removeClass("dark");
+  });
+
+  $("#grid-view").click(function() {
+  	sl.addClass("ach-grid");
+  	addAchievement(gridViewAchieve);
+  });
+  $("#bars-view").click(function() {
+  	sl.removeClass("ach-grid");
+  	addAchievement(barViewAchieve);
+  });
+  $("#toggle-stats").click(function() {
+  	$("#stats").toggleClass("display-none");
   });
 
   var sl = $("#search_list");
@@ -44,18 +59,36 @@ $(function() {
 		keypressAchievements[c.toUpperCase()] = a;
 	});
 
+	function addAchievement(a) {
+		if (a.achieved) return;
+		a.achieved = true;
+		a.element.addClass("achieved");
+		a.labelEl.html(a.label);
+		a.titleEl.text(a.title);
+		a.descEl.text(a.desc);
+		Alerts.addAlert(a);
+	}
+
 	addEventListener("keyup", function(e) {
 		var a = keypressAchievements[String.fromCharCode(e.keyCode)];
-		if (a && !a.achieved) {
-			a.achieved = true;
-			a.element.addClass("achieved");
-			a.labelEl.text(a.label);
-			a.titleEl.text(a.title);
-			a.descEl.text(a.desc);
-			Alerts.addAlert("Got it!");
+		if (a) {
+			addAchievement(a);
 		}
-		
 	});
+
+	var barViewAchieve = {
+		title: "List View",
+		label: "<i class='fa fa-align-justify'></i>",
+		desc: "View a list of your achievements."
+	}
+	achievements.push(barViewAchieve);
+
+	var gridViewAchieve = {
+		title: "Grid View",
+		label: "<i class='fa fa-th'></i>",
+		desc: "Switch back to viewing your achievements in a grid."
+	}
+	achievements.push(gridViewAchieve);
 
 	achievements.forEach(function(a) {
 		a.achieved = false;
