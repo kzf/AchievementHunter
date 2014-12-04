@@ -82,7 +82,11 @@ $(function() {
 		var achieved = ++this.achieved;
 		Achievements.achMilestones.forEach(function(n) {
 			if (n === achieved) {
-				Achievements.give(Achievements.achBased["have" + n]);
+				setTimeout(
+					Achievements.give.bind(
+						Achievements, 
+						Achievements.achBased["have" + n]
+						), 500);
 			}
 		});
 		this.updateStats();
@@ -97,14 +101,14 @@ $(function() {
 	    label: "<i class='fa fa-clock-o'></i>",
 	    desc: "Get two achievements consecutively.",
 	    spoiler: 1
-	}
+	};
 
 	Achievements.achMilestones = [1,5,10,25,50,75,100,125,150,200,250];
 	Achievements.achMilestones.forEach(function(n) {
 		Achievements.achBased["have" + n] = {
 			title: "Earn " + n + " Achievements",
 	    label: "<span class='label-s'><i class='fa fa-trophy'></i>" + n + "</span>",
-	    desc: "Well played.",
+	    desc: "Great start, but there are more to find. Keep going!",
 	    spoiler: 1
 		}
 	});
@@ -137,14 +141,24 @@ $(function() {
 	    label: "GG",
 	    desc: "Well played.",
 	    spoiler: 1
-	}
+	};
 	Achievements.add(Achievements.keypress.gg);
 
 	Achievements.keypress.map["Y"].title = "Press y";
 	Achievements.keypress.map["Y"].desc = "Oops, it must have been stuck.";
 
+	Achievements.keypress.caps = {
+	    title: "LOUD NOISES",
+	    label: "<span class='label-m'>ABC</span>",
+	    desc: "Turn on caps lock.",
+	    spoiler: 1
+	};
+	Achievements.add(Achievements.keypress.caps);
+
 	addEventListener("keydown", function(e) {
+		console.log(e);
 		var letter = String.fromCharCode(e.keyCode);
+		console.log(e.keyCode, letter);
 		var a = Achievements.keypress.map[letter];
 		if (a) {
 			a.presses += 1;
@@ -159,7 +173,132 @@ $(function() {
 			} else {
 				Achievements.give(a);
 			}
+		}
+		if (e.keyCode === 20) {
+			Achievements.give(Achievements.keypress.caps);
+		}
+	});
 
+	/****
+		Window-based Achievements
+		****/
+	Achievements.window = {};
+	Achievements.window.shrinkH = {
+			title: "Does My Window Look Big In This?",
+	    label: "<i class='fa fa-arrows-h'></i>",
+	    desc: "Shrink the browser window horizontally.",
+	    spoiler: 1
+	};
+	Achievements.window.shrinkV = {
+			title: "Honey I Shrunk The Browser",
+	    label: "<i class='fa fa-arrows-v'></i>",
+	    desc: "Shrink the browser vertically.",
+	    spoiler: 1
+	};
+	Achievements.window.growH = {
+			title: "Rapid Weight Loss",
+	    label: "<i class='fa fa-arrows-h'></i>",
+	    desc: "Make the browser window skinny.",
+	    spoiler: 1
+	};
+	Achievements.window.growV = {
+			title: "Growth Spurt",
+	    label: "<i class='fa fa-arrows-v'></i>",
+	    desc: "Make the browser window tall.",
+	    spoiler: 1
+	};
+
+	Achievements.window.help = {
+			title: "#help",
+	    label: "<span class='label-xs'>#help</span>",
+	    desc: "Ask for help.",
+	    spoiler: 1
+	};
+
+	Achievements.window.load = {
+			title: "In The Beginning",
+	    label: "<span class='label-xs'>init()</span>",
+	    desc: "Start the game.",
+	    spoiler: 2
+	};
+
+	Achievements.window.dblclick = {
+			title: "Click Click",
+	    label: "<i class='fa fa-location-arrow icon-double'></i>",
+	    desc: "Double click.",
+	    spoiler: 1
+	};
+
+	Achievements.window.blur = {
+			title: "Gone But Not Forgotten",
+	    label: "<i class='fa fa-minus-square-o'></i>",
+	    desc: "Leave the page but don't close it.",
+	    spoiler: 0
+	};
+	Achievements.window.focus = {
+			title: "Can't Stay Away",
+	    label: "<i class='fa fa-plus-square'></i>",
+	    desc: "Come back to the page.",
+	    spoiler: 0
+	};
+
+	Achievements.window.selection = {
+			title: "Re-Rewind",
+	    label: "<span class='label-m'>A<span class='selected'>chi</span></span>",
+	    desc: "Find the greek letter in the title.",
+	    spoiler: 1
+	};
+
+	Achievements.addAll(Achievements.window);
+
+	Achievements.window.lastW = window.innerWidth;
+	Achievements.window.lastH = window.innerHeight;
+	addEventListener('resize', function() {
+			if (window.innerWidth < Achievements.window.lastW) {
+				Achievements.give(Achievements.window.shrinkH);
+			}
+			if (window.innerWidth > Achievements.window.lastW) {
+				Achievements.give(Achievements.window.growH);
+			}
+			if (window.innerHeight < Achievements.window.lastH) {
+				Achievements.give(Achievements.window.shrinkV);
+			}
+			if (window.innerHeight > Achievements.window.lastH) {
+				Achievements.give(Achievements.window.growV);
+			}
+			Achievements.window.lastW = window.innerWidth;
+			Achievements.window.lastH = window.innerHeight;
+	});
+
+	addEventListener('hashchange', function(e) {
+		var hash = e.newURL.split("#")[1];
+		if (hash === "help") {
+			Achievements.give(Achievements.window.help);
+		}
+	});
+
+	addEventListener('load', function() {
+		Achievements.give(Achievements.window.load);
+	});
+
+	addEventListener('dblclick', function() {
+		Achievements.give(Achievements.window.dblclick);
+	});
+
+	addEventListener('blur', function(e) {
+		Achievements.give(Achievements.window.blur);
+		Achievements.left = true;
+	});
+
+	addEventListener('focus', function(e) {
+		if (Achievements.left)
+			Achievements.give(Achievements.window.focus);
+	});
+
+	addEventListener('mouseup', function() {
+		var sel = window.getSelection();
+		if (sel.toString() === 'chi') {
+			Achievements.give(Achievements.window.selection);
 		}
 	});
 
