@@ -1,5 +1,23 @@
 $(function() {
 
+	var Alerts = {
+		alerts: [],
+		el: $(".ach-alerts"),
+		addAlert: function(text) {
+			console.log(text);
+			var b = $("<div>").addClass("alert").text("You pressed it!");
+			if (this.alerts.length === 3) {
+				var a = this.alerts.pop();
+				a.fadeOut();
+			}
+			this.alerts.unshift(b);
+			this.el.append(b);
+			setTimeout(function() {
+				b.remove()
+			}, 3000);
+		}
+	}
+
   $("#darken").click(function() {
   	$("body, main").addClass("dark");
   });
@@ -18,7 +36,8 @@ $(function() {
 	var keypressAchievements = {};
 	chars.split("").forEach(function(c) {
 		var a = {
-		    name: c,
+		    title: "Press " + c,
+		    label: c,
 		    desc: "Press the " + c + " key"
 		  };
 		achievements.push(a);
@@ -27,24 +46,32 @@ $(function() {
 
 	addEventListener("keyup", function(e) {
 		var a = keypressAchievements[String.fromCharCode(e.keyCode)];
-		if (a) {
+		if (a && !a.achieved) {
+			a.achieved = true;
 			a.element.addClass("achieved");
-			a.labelEl.text(a.name);
+			a.labelEl.text(a.label);
+			a.titleEl.text(a.title);
 			a.descEl.text(a.desc);
+			Alerts.addAlert("Got it!");
 		}
 		
 	});
 
 	achievements.forEach(function(a) {
+		a.achieved = false;
 	  a.element = $("<li>").addClass("achievement");
 	  a.labelEl = $("<span>").text("?").addClass("ach-label");
-	  a.descEl = $("<span>").text("???").addClass("desc");
-	  a.element.append(a.labelEl).append(a.descEl);
+	  a.titleEl = $("<h3>").text("???").addClass("ach-title");
+	  a.descEl = $("<span>").text("???").addClass("ach-desc");
+	  a.tooltipEl = $("<div>").addClass("tooltip").append(a.titleEl).append(a.descEl);
+	  a.element.append(a.labelEl).append(a.tooltipEl);
 	  sl.append(a.element);
 	});
 
 	$('#search_input').fastLiveFilter('#search_list');
 });
+
+
 
 
 

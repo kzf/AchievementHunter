@@ -1,8 +1,14 @@
 @import url(http://fonts.googleapis.com/css?family=Droid+Serif);
 
+* {
+	box-sizing: border-box;
+}
+
 body {
 	font-family: Droid Serif, serif;
-	/* color: #333; */
+	color: #333;
+	font-size: 14px;
+	transition: background-color 0.2s ease;
 }
 
 header {
@@ -10,27 +16,100 @@ header {
 	box-shadow: 0 4px 2px -2px lightgray;
 }
 
+.page {
+	width: 95%;
+	margin: 0 auto;
+}
+
+h1 {
+	font-size: 28px;
+	margin-top: 20px;
+	margin-bottom: 10px;
+	font-weight: 500;
+	text-align: center;
+}
+
+a {
+	color: #337ab7;
+	text-decoration: none;
+}
+
+a:hover, a:focus {
+	color: #23527c;
+	text-decoration: underline;
+}
+
+.ach-filter {
+	text-align: center;
+}
+
+.filter-text {
+	display: inline-block;
+	padding: 4px 12px;
+	margin: 10px;
+	border-radius: 5px;
+	border: 1px solid #cccccc;
+	box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+	outline: none;
+	width: 175px;
+}
+
+.filter-text:focus {
+	box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+  border: 1px solid rgba(81, 203, 238, 1);
+}
+
+/******
+	DARK THEME
+	*******/
+
 body.dark {
 	color: #ddd;
-	background-color: black;
+	background-color: #333;
 }
+
+body.dark header {
+	border-bottom: 5px solid darkred;
+	box-shadow: 0 4px 2px -2px black;
+}
+
+/****
+	MAIN MENU
+	*****/
 
 a:hover {
 	cursor: pointer;
 }
 
+.btn-link {
+	background: #ccc;
+	padding: 3px 6px;
+	border-radius: 10px;
+	transition: all 0.4s ease;
+}
+
+.btn-link:hover {
+	color: black;
+	background-color: #999;
+}
+
+.btn-link:active {
+	background-color: #555;
+}
+
+/*****
+	ACHIEVEMENTS GRID STYLE
+	******/
+
 .ach-grid {
 	padding: 0;
 	margin: 0 auto;
 	text-align: center;
+	max-width: 600px;
 }
 
 .achievement {
-  width: 50px;
-  height: 50px;
   display: inline-block;
-  background: #cccccc;
-  border-radius: 5px;
   margin-right: 6px;
   margin-bottom: 6px;
 }
@@ -42,10 +121,21 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  width: 50px;
+  height: 50px;
+  font-size: 150%;
+  border: 2px solid #666;
+  background: #cccccc;
+  border-radius: 5px;
+  margin: 2px 0 0 2px;
+  transition: background-color 0.2s ease;
 }
 
-.achievement.achieved {
+.control-label {
+	display: none;
+}
+
+.achievement.achieved .ach-label {
   background-color: orange;
 }
 
@@ -62,18 +152,45 @@ a:hover {
 	position: relative;
 }
 
-.ach-grid li .desc {
+.ach-grid li .tooltip {
 	display: none;
 	position: absolute;
-	left: 0px;
+	width: 100%;
+	background-color: rgba(250, 250, 250, 0.95);
+	border: 1px solid #333;
+	left: 0;
+	margin: 6px 0 0 0;
+	padding: 15px;
+	border-radius: 5px;
+	text-align: left;
+	box-shadow: 0 0 5px rgba(99, 99, 99, 1);
 }
 
-.ach-grid li:hover .desc {
+.ach-grid li:hover .tooltip {
 	display: block;
 }
 
-@media only screen and (min-width: 480px) {
+.ach-title {
+	margin-top: 0;
+	margin-bottom: 8px;
+}
+
+@media only screen and (min-width: 580px) {
 	.theme-selector {
 		width: initial;
+		float: right;
+	}
+
+	h1 {
+		font-size: 36px;
+		text-align: left;
+	}
+
+	.filter-text {
+		width: 275px;
+	}
+
+	.control-label {
+		display: inline-block;
 	}
 }
