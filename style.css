@@ -21,10 +21,6 @@ header {
 	margin: 0 auto;
 }
 
-.display-none {
-	display: none;
-}
-
 
 /******
 	DARK THEME
@@ -107,6 +103,13 @@ a:hover, a:focus {
 
 .btn-link:active {
 	background-color: #555;
+}
+
+.no-results {
+	width: 100%;
+	padding: 10px;
+	font-size: 120%;
+	display: block;
 }
 
 /*****
@@ -201,6 +204,7 @@ a:hover, a:focus {
 
 .ach-grid .achievement {
   display: inline-block;
+  vertical-align:top;
   margin-right: 6px;
   margin-bottom: 6px;
   border: none;
@@ -227,6 +231,24 @@ a:hover, a:focus {
 	margin-left: 0px;
 }
 
+/*****
+	LABEL STYLES
+	*****/
+
+.label-xs {
+	display: block;
+	font-size: 10px;
+}
+
+.label-s {
+	display: block;
+	font-size: 14px;
+}
+
+.inverse-icon {
+	color: white;
+}
+
 
 /*****
 	Tooltip in grid view 
@@ -236,7 +258,7 @@ a:hover, a:focus {
 }
 
 .ach-grid li .tooltip {
-	display: none;
+	visibility: hidden;
 	position: absolute;
 	z-index: 2;
 	width: 100%;
@@ -247,11 +269,14 @@ a:hover, a:focus {
 	padding: 15px;
 	border-radius: 5px;
 	text-align: left;
-	box-shadow: 0 0 5px rgba(99, 99, 99, 1);
+	box-shadow: 0 0 5px rgba(133, 133, 133, 1);
+	transform: translateY(3px);
+	transition: transform 0.4s;
 }
 
 .ach-grid li:hover .tooltip {
-	display: block;
+	visibility: visible;
+	transform: translateY(0px);
 }
 
 .ach-grid .ach-title {
@@ -329,6 +354,14 @@ a:hover, a:focus {
   *******/
 
 .control-label {
+	display: none;
+}
+
+/*****
+	AT END
+	******/
+
+.display-none {
 	display: none;
 }
 
