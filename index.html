@@ -1,4 +1,46 @@
-<input id="search_input" placeholder="Type to filter">
-<ul id="search_list">
+<!doctype html>
+<html lang="en">
+	<head>
+	  <meta charset="utf-8">
+	  <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-</ul>
+	  <title></title>
+
+	  <meta name="description" content="">
+	  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.1/normalize.min.css">
+	  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+	  <link rel="stylesheet" href="style.css">
+	  <script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+	</head>
+	<body>
+	  <!--[if lt IE 8]>
+	      <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+	  <![endif]-->
+
+		<main class="container">
+			<header class="header">
+				<div class="pull-right theme-selector">
+					Theme: <a id="lighten">Light</a> / <a id="darken">Dark</a>
+				</div>
+				<h1>Achievement Hunter</h1>
+	 		</header>
+
+			<div class="ach-filter">
+				<input id="search_input" placeholder="Filter achievements">
+			</div>
+
+			<div class="ach-list">
+				<ul id="search_list" class="ach-grid">
+
+				</ul>
+			</div>
+		</main>
+
+	  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	  <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.1.min.js"><\/script>')</script>
+	  <script src="app.js"></script>
+
+	</body>
+</html>

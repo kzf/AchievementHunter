@@ -1,13 +1,79 @@
+@import url(http://fonts.googleapis.com/css?family=Droid+Serif);
+
+body {
+	font-family: Droid Serif, serif;
+	/* color: #333; */
+}
+
+header {
+	border-bottom: 5px solid orange;
+	box-shadow: 0 4px 2px -2px lightgray;
+}
+
+body.dark {
+	color: #ddd;
+	background-color: black;
+}
+
+a:hover {
+	cursor: pointer;
+}
+
+.ach-grid {
+	padding: 0;
+	margin: 0 auto;
+	text-align: center;
+}
+
 .achievement {
   width: 50px;
   height: 50px;
   display: inline-block;
-  padding-right: 10px;
   background: #cccccc;
   border-radius: 5px;
   margin-right: 6px;
+  margin-bottom: 6px;
+}
+
+.ach-label {
+	display: -webkit-flex;
+  -webkit-align-items: center;
+  -webkit-justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
 }
 
 .achievement.achieved {
   background-color: orange;
+}
+
+.theme-selector {
+	width: 100%;
+	font-size: 80%;
+	text-align: center;
+}
+
+/*****
+	Tooltip in grid view 
+	******/
+.ach-grid {
+	position: relative;
+}
+
+.ach-grid li .desc {
+	display: none;
+	position: absolute;
+	left: 0px;
+}
+
+.ach-grid li:hover .desc {
+	display: block;
+}
+
+@media only screen and (min-width: 480px) {
+	.theme-selector {
+		width: initial;
+	}
 }

@@ -1,3 +1,53 @@
+$(function() {
+
+  $("#darken").click(function() {
+  	$("body, main").addClass("dark");
+  });
+  $("#lighten").click(function() {
+  	$("body, main").removeClass("dark");
+  });
+
+  var sl = $("#search_list");
+
+	var achievements = [
+		
+	];
+
+	// Key press achievements
+	var chars = "abcdefghijklmnopqrstuvwxyz";
+	var keypressAchievements = {};
+	chars.split("").forEach(function(c) {
+		var a = {
+		    name: c,
+		    desc: "Press the " + c + " key"
+		  };
+		achievements.push(a);
+		keypressAchievements[c.toUpperCase()] = a;
+	});
+
+	addEventListener("keyup", function(e) {
+		var a = keypressAchievements[String.fromCharCode(e.keyCode)];
+		if (a) {
+			a.element.addClass("achieved");
+			a.labelEl.text(a.name);
+			a.descEl.text(a.desc);
+		}
+		
+	});
+
+	achievements.forEach(function(a) {
+	  a.element = $("<li>").addClass("achievement");
+	  a.labelEl = $("<span>").text("?").addClass("ach-label");
+	  a.descEl = $("<span>").text("???").addClass("desc");
+	  a.element.append(a.labelEl).append(a.descEl);
+	  sl.append(a.element);
+	});
+
+	$('#search_input').fastLiveFilter('#search_list');
+});
+
+
+
 /**
  * fastLiveFilter jQuery plugin 1.0.3
  * 
@@ -61,64 +111,3 @@ jQuery.fn.fastLiveFilter = function(list, options) {
 	});
 	return this; // maintain jQuery chainability
 }
-
-$(function() {
-  $('#search_input').fastLiveFilter('#search_list');
-});
-
-var sl = $("#search_list");
-
-var achievements = [
-	{
-    name: "A",
-    trigger: "keyup",
-    f: function(e) {
-      if (e.keyCode == 65) {
-        return true;
-      }
-      return false;
-    }
-  },
-  {
-    name: "S",
-    trigger: "keyup",
-    f: function(e) {
-      if (e.keyCode == 83) {
-        return true;
-      }
-      return false;
-    }
-  },
-  {
-    name: "D",
-    trigger: "keyup",
-    f: function(e) {
-      if (e.keyCode == 68) {
-        return true;
-      }
-      return false;
-    }
-  },
-  {
-    name: "F",
-    trigger: "keyup",
-    f: function(e) {
-      if (e.keyCode == 70) {
-        return true;
-      }
-      return false;
-    }
-  }
-];
-
-achievements.forEach(function(a) {
-  a.element = $("<li>").text(a.name).addClass("achievement");
-  sl.append(a.element);
-  if (a.trigger === 'keyup') {
-    addEventListener("keyup", function(e) {
-      if (a.f(e)) {
-        a.element.addClass("achieved");
-      }
-    });
-  }
-});
