@@ -91,11 +91,13 @@ $(function() {
 			gridView: $("#grid-view").click(function() {
 			  	UI.achievements.addClass("ach-grid");
 			  	UI.achView.grid = true;
+			  	Paging.update();
 			  	Achievements.give(Achievements.ui.gridView);
 			  }),
 			listView: $("#bars-view").click(function() {
 			  	UI.achievements.removeClass("ach-grid");
 			  	UI.achView.grid = false;
+			  	Paging.update();
 			  	Achievements.give(Achievements.ui.barView);
 			  }),
 			stats: $("#toggle-stats").click(function() {
@@ -126,7 +128,7 @@ $(function() {
 				return b;
 			},
 			achievement: function(a) {
-				a.element = $("<li>").addClass("achievement").hide();
+				a.element = $("<li>").addClass("achievement").addClass("display-none");
 			  a.labelEl = $("<span>").text("?").addClass("ach-label");
 			  if (a.spoiler > 0) a.labelEl.html(a.label);
 			  a.titleEl = $("<h3>").text("???").addClass("ach-title");
@@ -143,39 +145,57 @@ $(function() {
   	PAGING
   	*********/
   var Paging = {
-  	grid: true,
+  	grid: false,
   	maxGridRows: 5,
+  	maxListRows: 6,
   	cols: null,
-  	maxElements: 20,
-  	maxPages: 0,
+  	perPage: 20,
+
   	pageStart: false,
   	update: function() {
   		if (!this.pageStart) {
   			this.pageStart = 0;
   		}
   		if (UI.achView.grid) {
+
+  			if (!this.grid) {
+	  			UI.achievements.css("height", 58 * this.maxGridRows + "px");
+	  			this.grid = true;
+	  		}
   			var width = window.innerWidth;
   			if (width > 600) {
   				width = 600;
   			}
-  			var cols = Math.floor((width-25)/58);
-  			console.log(cols);
+  			var cols = Math.floor((width-28)/58);
+
   			if (this.cols !== cols) {
   				UI.achList.css("width", cols*58 + 18 + "px");
 
   				this.clearPage(this.pageStart);
-  				this.maxElements = cols * this.maxGridRows;
+  				this.perPage = cols * this.maxGridRows;
   				var start = this.pageStart;
   				this.pageStart = false;
   				this.showPage(start);
   			}
+
+  		} else {
+  			if (this.grid) {
+  				console.log("A");
+  				UI.achList.css("width", "");
+	  			UI.achievements.css("height", "");
+	  			this.clearPage(this.pageStart);
+  				this.perPage = this.maxListRows;
+  				var start = this.pageStart;
+  				this.pageStart = false;
+  				this.showPage(start);
+	  			this.grid = false;
+	  		}
   		}
-  		this.showPage(this.pageStart);
   	},
   	clearPage: function(start) {
-  		for (var i = start; i < start + this.maxElements; i++) {
+  		for (var i = start; i < start + this.perPage; i++) {
 				if (i < Achievements.total) {
-					Achievements.list[i].element.hide();
+					Achievements.list[i].element.addClass("display-none");
 				}
   		}
   	},
@@ -184,21 +204,21 @@ $(function() {
   			this.clearPage(this.pageStart);
   		}
   		this.pageStart = start;
-  		for (var i = start; i < start + this.maxElements; i++) {
+  		for (var i = start; i < start + this.perPage; i++) {
   			if (i < Achievements.total) {
-  				Achievements.list[i].element.show();
+  				Achievements.list[i].element.removeClass("display-none");
   			}
   		}
   	},
   	nextPage: function() {
-  		if (this.pageStart + this.maxElements < Achievements.total) {
-  			this.showPage(this.pageStart + this.maxElements);
+  		if (this.pageStart + this.perPage < Achievements.total) {
+  			this.showPage(this.pageStart + this.perPage);
   		}
   	},
   	prevPage: function() {
-			if (this.pageStart - this.maxElements > 0) {
+			if (this.pageStart - this.perPage > 0) {
 				console.log("A");
-  			this.showPage(this.pageStart - this.maxElements);
+  			this.showPage(this.pageStart - this.perPage);
   		} else {
   			this.showPage(0);
   		}
