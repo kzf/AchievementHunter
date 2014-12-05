@@ -11,11 +11,12 @@ $(function() {
 			b.append(achLabel).append(achTitle).append(achDesc);
 			if (this.alerts.length === 3) {
 				var a = this.alerts.pop();
-				a.addClass("alert-hide");
+				clearTimeout(a.timeout);
+				a.remove();
 			}
 			this.alerts.unshift(b);
 			this.el.append(b);
-			setTimeout(function() {
+			b.timeout = setTimeout(function() {
 				b.remove()
 			}, 5000);
 		}
@@ -123,6 +124,7 @@ $(function() {
 		****/
 	Achievements.keypress = {
 		chars: "abcdefghijklmnopqrstuvwxyz",
+		digits: "1234567890",
 		map: {},
 	};
 
@@ -142,6 +144,19 @@ $(function() {
 	Achievements.keypress.map["C"].spoiler = 1;
 	Achievements.keypress.map["D"].spoiler = 1;
 
+	for (var i = 1; i <= 10; i++) {
+		var c = i < 10 ? i : 0;
+		var a = {
+		    title: "Press " + c,
+		    label: c,
+		    desc: "Press the " + c + " key " + Math.pow(2, i) + " times.",
+		    spoiler: 1,
+		    presses: 0
+		  };
+		Achievements.add(a);
+		Achievements.keypress.map[i] = a;
+	}
+
 	Achievements.keypress.gg = {
 	    title: "Good Game",
 	    label: "GG",
@@ -160,6 +175,51 @@ $(function() {
 	};
 	Achievements.add(Achievements.keypress.caps);
 
+	Achievements.keypress.ctrl = {}
+	Achievements.keypress.ctrl["C"] = {
+	    title: "Plagiarism",
+	    label: "<i class='fa fa-copy'></i>",
+	    desc: "Copy some text from the page.",
+	    spoiler: 1
+	};
+	Achievements.keypress.ctrl["X"] = {
+	    title: "Vandalism",
+	    label: "<i class='fa fa-scissors'></i>",
+	    desc: "Try to cut some text from the page.",
+	    spoiler: 1
+	};
+	Achievements.keypress.ctrl["V"] = {
+	    title: "PVA",
+	    label: "<i class='fa fa-paste'></i>",
+	    desc: "Paste something.",
+	    spoiler: 1
+	};
+	Achievements.keypress.ctrl["P"] = {
+	    title: "PC LOAD LETTER",
+	    label: "<i class='fa fa-print'></i>",
+	    desc: "Print the page (don't actually print the page).",
+	    spoiler: 1
+	};
+	Achievements.keypress.ctrl["S"] = {
+	    title: "Why...?",
+	    label: "<i class='fa fa-save'></i>",
+	    desc: "Try to save the page.",
+	    spoiler: 1
+	};
+	Achievements.keypress.ctrl["Z"] = {
+	    title: "Oops",
+	    label: "<i class='fa fa-undo'></i>",
+	    desc: "Try to undo something.",
+	    spoiler: 1
+	};
+	Achievements.keypress.ctrl["A"] = {
+	    title: "I Want It All",
+	    label: "<span class='label-m'><span class='selected'>*</span></span>",
+	    desc: "Select everything.",
+	    spoiler: 1
+	};
+	Achievements.addAll(Achievements.keypress.ctrl);
+
 	addEventListener("keydown", function(e) {
 		console.log(e);
 		var letter = String.fromCharCode(e.keyCode);
@@ -168,15 +228,23 @@ $(function() {
 		if (a) {
 			a.presses++;
 			var lastTime = a.lastPressed;
-			a.lastPressed = Date.now();
-			if (letter === 'G' && lastTime && a.lastPressed - lastTime < 200) {
-				Achievements.give(Achievements.keypress.gg);
-			} else if (letter === 'U') {
-				if (a.presses === 8) {
+			if (!e.altKey && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
+				console.log("A");
+				a.lastPressed = Date.now();
+				if (letter === 'G' && lastTime && a.lastPressed - lastTime < 200) {
+					Achievements.give(Achievements.keypress.gg);
+				} else if (letter === 'U') {
+					if (a.presses === 8) {
+						Achievements.give(a);
+					}
+				} else {
 					Achievements.give(a);
 				}
-			} else {
-				Achievements.give(a);
+			} else if (e.ctrlKey || e.metaKey) {
+				var ach;
+				if (ach = Achievements.keypress.ctrl[letter]) {
+					Achievements.give(ach);
+				}
 			}
 		}
 		if (e.keyCode === 20) {
@@ -378,6 +446,13 @@ $(function() {
 		spoiler: 1
 	}
 
+	Achievements.ui.clearsearch = {
+		title: "Clear",
+		label: "<i class='fa fa-search'>*</i>",
+		desc: "Discovered that clicking on the search icon clears the search box!",
+		spoiler: 0
+	}
+
 	Achievements.ui.noresults = {
 		title: "Nothing To See Here",
 		label: "{}",
@@ -407,8 +482,31 @@ $(function() {
 	}
 	Achievements.addAll(Achievements.ui);
 
+	/*****
+		INTERACTABLE
+		*****/
+	Achievements.inter = {};
+	Achievements.inter.click = {
+		title: "Touch Me",
+		label: "<i class='fa fa-rotate-right'></i>",
+		desc: "Click on this achievement.",
+		spoiler: 1
+	}
+
+	Achievements.inter.ask = {
+		title: "You Only Have To Ask",
+		label: "<i class='fa fa-support'></i>",
+		desc: "Ask and you shall receive.",
+		spoiler: 1
+	}
+	Achievements.addAll(Achievements.inter);
 
 
+
+
+	/*****
+		POPULATE ACHIEVEMENT INTO DOM
+		*****/
 	Achievements.list.forEach(function(a) {
 		a.achieved = false;
 	  a.element = $("<li>").addClass("achievement");
@@ -427,11 +525,17 @@ $(function() {
 	$('#search_input').fastLiveFilter('#search_list', {
 		timeout: 100,
 		callback: function(total) {
-			if ($('#search_input').val() !== "") {
+			/*****
+				SEARCH INPUT Achievements
+				******/
+			var q = $('#search_input').val().toLowerCase();
+			if (q !== "") {
 				Achievements.give(Achievements.ui.filter);
 			}
-			if ($('#search_input').val().toLowerCase() === "help") {
+			if (q === "help") {
 				Achievements.give(Achievements.ui.help);
+			} else if (q === "you only have to ask") {
+				Achievements.give(Achievements.inter.ask);
 			}
 			if (total === 0) {
 				$("#no_results").removeClass("display-none").show();
@@ -442,7 +546,22 @@ $(function() {
 		}
 	});
 
+	$("#search-icon").click(function() {
+		if ($('#search_input').val()  !== '') {
+			Achievements.give(Achievements.ui.clearsearch);
+		}
+		$('#search_input').val("").change();
+	})
+
 	Achievements.updateStats();
+
+
+	/******
+		Interactivity that needs Achievements to be in the DOM
+		******/
+	Achievements.inter.click.labelEl.click(function() {
+		Achievements.give(Achievements.inter.click);
+	})
 
 
 });
