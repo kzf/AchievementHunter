@@ -1,17 +1,22 @@
 $(function() {
 
+	/****
+		STORAGE
+		*****/
 	var Storage = {
 		load: function() {
 			this.local = JSON.parse(localStorage["achievements"]);
 			for (var _id in this.local) {
-				console.log(_id);
 				if (this.local.hasOwnProperty(_id) && Achievements.by_id[_id]) {
 					Achievements.give(Achievements.by_id[_id], true);
 				}
 			}
 		},
+		reset: function() {
+			localStorage["achievements"] = JSON.stringify({});
+			location.reload();
+		},
 		save: function() {
-			console.log(this);
 			var self = this;
 			Achievements.list.forEach(function(a) {
 				if (a.achieved) {
@@ -23,15 +28,14 @@ $(function() {
 		local: {}
 	};
 
+	/****
+		ALERTS
+		*****/
 	var Alerts = {
 		alerts: [],
 		el: $(".ach-alerts"),
 		addAlert: function(ach) {
-			var b = $("<div>").addClass("alert").addClass("achieved");
-			var achTitle = $("<h3>").text(ach.title).addClass("alert-title");
-			var achDesc = $("<span>").text(ach.desc).addClass("alert-desc");
-			var achLabel = $("<span>").html(ach.label).addClass("ach-label").addClass("pull-left");
-			b.append(achLabel).append(achTitle).append(achDesc);
+			var b = UI.build.alert(ach.title, ach.desc, ach.label);
 			if (this.alerts.length === 3) {
 				var a = this.alerts.pop();
 				clearTimeout(a.timeout);
@@ -43,31 +47,169 @@ $(function() {
 				b.remove()
 			}, 5000);
 		}
-	}
+	};
 
-  $("#darken").click(function() {
-  	$("body, main").addClass("dark");
-  	Achievements.give(Achievements.ui.dark);
-  });
-  $("#lighten").click(function() {
-  	$("body, main").removeClass("dark");
-  	Achievements.give(Achievements.ui.light);
-  });
+	/****
+		UI
+		*****/
+	var UI = {
+		/****
+			STATS
+			*****/
+		achView: {
+			grid: true
+		},
+		/****
+			STATS
+			*****/
+		stats: {
+			container: $("#stats"),
+			achieved: $("#num-achieved"),
+  		total: $("#total-achieved")
+  	},
+  	/****
+  		Save references to UI elements
+  		*****/
+		achievements: $("#achievements"),
+		themeGroup: $("body, main"),
+		filter: $('#filter'),
+		noResults: $("#no_results"),
+		searchIcon: $("#search-icon"),
+		achList: $(".ach-list"),
+		/****
+			BUTTONS
+			*****/
+		buttons: {
+			darken: $("#darken").click(function() {
+			  	UI.themeGroup.addClass("dark");
+			  	Achievements.give(Achievements.ui.dark);
+			  }),
+			lighten: $("#lighten").click(function() {
+			  	UI.themeGroup.removeClass("dark");
+			  	Achievements.give(Achievements.ui.light);
+			  }),
+			gridView: $("#grid-view").click(function() {
+			  	UI.achievements.addClass("ach-grid");
+			  	UI.achView.grid = true;
+			  	Achievements.give(Achievements.ui.gridView);
+			  }),
+			listView: $("#bars-view").click(function() {
+			  	UI.achievements.removeClass("ach-grid");
+			  	UI.achView.grid = false;
+			  	Achievements.give(Achievements.ui.barView);
+			  }),
+			stats: $("#toggle-stats").click(function() {
+			  	UI.stats.container.toggleClass("display-none");
+			  }),
+			reset: $("#reset-game").click(function() {
+			  	Storage.reset();
+			  }),
+			prevPage: $("#prev-page").click(function(e) {
+				e.preventDefault();
+				Paging.prevPage();
+			}),
+			nextPage: $("#next-page").click(function(e) {
+				e.preventDefault();
+				Paging.nextPage();
+			})
+		},
+		/****
+			Functions that build UI elements
+			*****/
+		build: {
+			alert: function(title, desc, label) {
+				var b = $("<div>").addClass("alert").addClass("achieved");
+				var achTitle = $("<h3>").text(title).addClass("alert-title");
+				var achDesc = $("<span>").text(desc).addClass("alert-desc");
+				var achLabel = $("<span>").html(label).addClass("ach-label").addClass("pull-left");
+				b.append(achLabel).append(achTitle).append(achDesc);
+				return b;
+			},
+			achievement: function(a) {
+				a.element = $("<li>").addClass("achievement").hide();
+			  a.labelEl = $("<span>").text("?").addClass("ach-label");
+			  if (a.spoiler > 0) a.labelEl.html(a.label);
+			  a.titleEl = $("<h3>").text("???").addClass("ach-title");
+			  if (a.spoiler > 0) a.titleEl.html(a.title);
+			  a.descEl = $("<span>").text("???").addClass("ach-desc");
+			  if (a.spoiler > 1) a.descEl.html(a.desc);
+			  a.tooltipEl = $("<div>").addClass("tooltip").append(a.titleEl).append(a.descEl);
+			  a.element.append(a.labelEl).append(a.tooltipEl);
+			}
+		}
+	};
 
-  $("#grid-view").click(function() {
-  	sl.addClass("ach-grid");
-  	Achievements.give(Achievements.ui.gridView);
-  });
-  $("#bars-view").click(function() {
-  	sl.removeClass("ach-grid");
-  	Achievements.give(Achievements.ui.barView);
-  });
-  $("#toggle-stats").click(function() {
-  	$("#stats").toggleClass("display-none");
-  });
+  /********
+  	PAGING
+  	*********/
+  var Paging = {
+  	grid: true,
+  	maxGridRows: 5,
+  	cols: null,
+  	maxElements: 20,
+  	maxPages: 0,
+  	pageStart: false,
+  	update: function() {
+  		if (!this.pageStart) {
+  			this.pageStart = 0;
+  		}
+  		if (UI.achView.grid) {
+  			var width = window.innerWidth;
+  			if (width > 600) {
+  				width = 600;
+  			}
+  			var cols = Math.floor((width-25)/58);
+  			console.log(cols);
+  			if (this.cols !== cols) {
+  				UI.achList.css("width", cols*58 + 18 + "px");
 
-  var sl = $("#search_list");
+  				this.clearPage(this.pageStart);
+  				this.maxElements = cols * this.maxGridRows;
+  				var start = this.pageStart;
+  				this.pageStart = false;
+  				this.showPage(start);
+  			}
+  		}
+  		this.showPage(this.pageStart);
+  	},
+  	clearPage: function(start) {
+  		for (var i = start; i < start + this.maxElements; i++) {
+				if (i < Achievements.total) {
+					Achievements.list[i].element.hide();
+				}
+  		}
+  	},
+  	showPage: function(start) {
+  		if (this.pageStart !== false) {
+  			this.clearPage(this.pageStart);
+  		}
+  		this.pageStart = start;
+  		for (var i = start; i < start + this.maxElements; i++) {
+  			if (i < Achievements.total) {
+  				Achievements.list[i].element.show();
+  			}
+  		}
+  	},
+  	nextPage: function() {
+  		if (this.pageStart + this.maxElements < Achievements.total) {
+  			this.showPage(this.pageStart + this.maxElements);
+  		}
+  	},
+  	prevPage: function() {
+			if (this.pageStart - this.maxElements > 0) {
+				console.log("A");
+  			this.showPage(this.pageStart - this.maxElements);
+  		} else {
+  			this.showPage(0);
+  		}
+  	}
+  };
+  
 
+
+	/********
+  	ACHIEVEMENTS
+  	*********/
   var Achievements = {
   	list: [],
   	by_id: {},
@@ -85,14 +227,13 @@ $(function() {
 			}
   	},
   	updateStats: function() {
-  		this.achievedEl.text(this.achieved);
-  		this.totalEl.text(this.total);
+  		UI.stats.achieved.text(this.achieved);
+  		UI.stats.total.text(this.total);
   	},
   	total: 0,
-  	achieved: 0,
-  	achievedEl: $("#num-achieved"),
-  	totalEl: $("#total-achieved")
+  	achieved: 0
   };
+
   Achievements.give = function(a, silent) {
 		if (a.achieved) return;
 		a.achieved = true;
@@ -236,43 +377,43 @@ $(function() {
 	    title: "Plagiarism",
 	    label: "<i class='fa fa-copy'></i>",
 	    desc: "Copy some text from the page.",
-	    spoiler: 1
+	    spoiler: 0
 	};
 	Achievements.keypress.ctrl["X"] = {
 	    title: "Vandalism",
 	    label: "<i class='fa fa-scissors'></i>",
 	    desc: "Try to cut some text from the page.",
-	    spoiler: 1
+	    spoiler: 0
 	};
 	Achievements.keypress.ctrl["V"] = {
 	    title: "PVA",
 	    label: "<i class='fa fa-paste'></i>",
 	    desc: "Paste something.",
-	    spoiler: 1
+	    spoiler: 0
 	};
 	Achievements.keypress.ctrl["P"] = {
 	    title: "PC LOAD LETTER",
 	    label: "<i class='fa fa-print'></i>",
 	    desc: "Print the page (don't actually print the page).",
-	    spoiler: 1
+	    spoiler: 0
 	};
 	Achievements.keypress.ctrl["S"] = {
 	    title: "Why...?",
 	    label: "<i class='fa fa-save'></i>",
 	    desc: "Try to save the page.",
-	    spoiler: 1
+	    spoiler: 0
 	};
 	Achievements.keypress.ctrl["Z"] = {
 	    title: "Oops",
 	    label: "<i class='fa fa-undo'></i>",
 	    desc: "Try to undo something.",
-	    spoiler: 1
+	    spoiler: 0
 	};
 	Achievements.keypress.ctrl["A"] = {
 	    title: "I Want It All",
 	    label: "<span class='label-m'><span class='selected'>*</span></span>",
 	    desc: "Select everything.",
-	    spoiler: 1
+	    spoiler: 0
 	};
 	Achievements.addAll(Achievements.keypress.ctrl);
 
@@ -330,104 +471,106 @@ $(function() {
 		****/
 	Achievements.window = {};
 	Achievements.window.growH = {
-			title: "Does My Window Look Big In This?",
-	    label: "<i class='fa fa-arrows-h'></i>",
-	    desc: "Because you know I'm all about that space.",
-	    spoiler: 1
+		title: "Does My Window Look Big In This?",
+    label: "<i class='fa fa-arrows-h'></i>",
+    desc: "Because you know I'm all about that space.",
+    spoiler: 1
 	};
 	Achievements.window.shrinkV = {
-			title: "Honey I Shrunk The Browser",
-	    label: "<i class='fa fa-arrows-v'></i>",
-	    desc: "Shrink the browser vertically.",
-	    spoiler: 1
+		title: "Honey I Shrunk The Browser",
+    label: "<i class='fa fa-arrows-v'></i>",
+    desc: "Shrink the browser vertically.",
+    spoiler: 1
 	};
 	Achievements.window.shrinkH = {
-			title: "Rapid Weight Loss",
-	    label: "<i class='fa fa-arrows-h'></i>",
-	    desc: "Make the browser window skinny.",
-	    spoiler: 1
+		title: "Rapid Weight Loss",
+    label: "<i class='fa fa-arrows-h'></i>",
+    desc: "Make the browser window skinny.",
+    spoiler: 1
 	};
 	Achievements.window.growV = {
-			title: "Growth Spurt",
-	    label: "<i class='fa fa-arrows-v'></i>",
-	    desc: "Make the browser window tall.",
-	    spoiler: 1
+		title: "Growth Spurt",
+    label: "<i class='fa fa-arrows-v'></i>",
+    desc: "Make the browser window tall.",
+    spoiler: 1
 	};
 
 	Achievements.window.help = {
-			title: "#help",
-	    label: "<span class='label-xs'>#help</span>",
-	    desc: "Ask for help in the address bar.",
-	    spoiler: 1
+		title: "#help",
+    label: "<span class='label-xs'>#help</span>",
+    desc: "Ask for help in the address bar.",
+    spoiler: 1
 	};
 
 	Achievements.window.load = {
-			title: "In The Beginning",
-	    label: "<span class='label-xs'>init()</span>",
-	    desc: "Start the game.",
-	    spoiler: 2
+		title: "In The Beginning",
+    label: "<span class='label-xs'>init()</span>",
+    desc: "Start the game.",
+    spoiler: 2
 	};
 
 	Achievements.window.dblclick = {
-			title: "Click Click",
-	    label: "<i class='fa fa-location-arrow icon-double'></i>",
-	    desc: "Double click.",
-	    spoiler: 1
+		title: "Click Click",
+    label: "<i class='fa fa-location-arrow icon-double'></i>",
+    desc: "Double click.",
+    spoiler: 1
 	};
 
 	Achievements.window.blur = {
-			title: "Gone But Not Forgotten",
-	    label: "<i class='fa fa-minus-square-o'></i>",
-	    desc: "Leave the page but don't close it.",
-	    spoiler: 0
+		title: "Gone But Not Forgotten",
+    label: "<i class='fa fa-minus-square-o'></i>",
+    desc: "Leave the page but don't close it.",
+    spoiler: 0
 	};
 	Achievements.window.focus = {
-			title: "Can't Stay Away",
-	    label: "<i class='fa fa-plus-square'></i>",
-	    desc: "Come back to the page.",
-	    spoiler: 0
+		title: "Can't Stay Away",
+    label: "<i class='fa fa-plus-square'></i>",
+    desc: "Come back to the page.",
+    spoiler: 0
 	};
 
 	Achievements.window.selection = {
-			title: "Re-Rewind",
-	    label: "<span class='label-m'>A<span class='selected'>chi</span></span>",
-	    desc: "Find the greek letter in the title.",
-	    spoiler: 1
+		title: "Re-Rewind",
+    label: "<span class='label-m'>A<span class='selected'>chi</span></span>",
+    desc: "Find the greek letter in the title.",
+    spoiler: 1
 	};
 
 	Achievements.window.narcissist = {
-			title: "Narcissist",
-	    label: "<i class='fa fa-" + (Math.random() < 0.5 ? "male" : "female") + "'></i>",
-	    desc: "It's all about me, me, me.",
-	    spoiler: 1
+		title: "Narcissist",
+    label: "<i class='fa fa-" + (Math.random() < 0.5 ? "male" : "female") + "'></i>",
+    desc: "It's all about me, me, me.",
+    spoiler: 1
 	};
 
 	Achievements.window.em = {
-			title: "Emphasis",
-	    label: "<i class='fa fa-italic'></i>",
-	    desc: "It's semantic.",
-	    spoiler: 2
+		title: "Emphasis",
+    label: "<i class='fa fa-italic'></i>",
+    desc: "It's semantic.",
+    spoiler: 2
 	};
 
 	Achievements.addAll(Achievements.window);
 
 	Achievements.window.lastW = window.innerWidth;
 	Achievements.window.lastH = window.innerHeight;
+
 	addEventListener('resize', function() {
-			if (window.innerWidth < Achievements.window.lastW) {
-				Achievements.give(Achievements.window.shrinkH);
-			}
-			if (window.innerWidth > Achievements.window.lastW) {
-				Achievements.give(Achievements.window.growH);
-			}
-			if (window.innerHeight < Achievements.window.lastH) {
-				Achievements.give(Achievements.window.shrinkV);
-			}
-			if (window.innerHeight > Achievements.window.lastH) {
-				Achievements.give(Achievements.window.growV);
-			}
-			Achievements.window.lastW = window.innerWidth;
-			Achievements.window.lastH = window.innerHeight;
+		Paging.update();
+		if (window.innerWidth < Achievements.window.lastW) {
+			Achievements.give(Achievements.window.shrinkH);
+		}
+		if (window.innerWidth > Achievements.window.lastW) {
+			Achievements.give(Achievements.window.growH);
+		}
+		if (window.innerHeight < Achievements.window.lastH) {
+			Achievements.give(Achievements.window.shrinkV);
+		}
+		if (window.innerHeight > Achievements.window.lastH) {
+			Achievements.give(Achievements.window.growV);
+		}
+		Achievements.window.lastW = window.innerWidth;
+		Achievements.window.lastH = window.innerHeight;
 	});
 
 	addEventListener('hashchange', function(e) {
@@ -582,26 +725,18 @@ $(function() {
 		*****/
 	Achievements.list.forEach(function(a) {
 		a.achieved = false;
-	  a.element = $("<li>").addClass("achievement");
-	  a.labelEl = $("<span>").text("?").addClass("ach-label");
-	  if (a.spoiler > 0) a.labelEl.html(a.label);
-	  a.titleEl = $("<h3>").text("???").addClass("ach-title");
-	  if (a.spoiler > 0) a.titleEl.html(a.title);
-	  a.descEl = $("<span>").text("???").addClass("ach-desc");
-	  if (a.spoiler > 1) a.descEl.html(a.desc);
-	  a.tooltipEl = $("<div>").addClass("tooltip").append(a.titleEl).append(a.descEl);
-	  a.element.append(a.labelEl).append(a.tooltipEl);
-	  sl.append(a.element);
+		UI.build.achievement(a);
+	  UI.achievements.append(a.element);
 	});
 
 
-	$('#search_input').fastLiveFilter('#search_list', {
+	UI.filter.fastLiveFilter('#achievements', {
 		timeout: 100,
 		callback: function(total) {
 			/*****
 				SEARCH INPUT Achievements
 				******/
-			var q = $('#search_input').val().toLowerCase();
+			var q = UI.achievements.val().toLowerCase();
 			if (q !== "") {
 				Achievements.give(Achievements.ui.filter);
 			}
@@ -611,22 +746,24 @@ $(function() {
 				Achievements.give(Achievements.inter.ask);
 			}
 			if (total === 0) {
-				$("#no_results").removeClass("display-none").show();
+				UI.noResults.removeClass("display-none").show();
 				Achievements.give(Achievements.ui.noresults);
 			} else {
-				$("#no_results").addClass("display-none");
+				UI.noResults.addClass("display-none");
 			}
 		}
 	});
 
-	$("#search-icon").click(function() {
-		if ($('#search_input').val()  !== '') {
+	UI.searchIcon.click(function() {
+		if (UI.filter.val()  !== '') {
 			Achievements.give(Achievements.ui.clearsearch);
 		}
-		$('#search_input').val("").change();
+		UI.filter.val("").change();
 	})
 
 	Storage.load();
+
+	Paging.update();
 
 	Achievements.updateStats();
 

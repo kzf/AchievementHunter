@@ -28,7 +28,7 @@
 	 		</header>
 
 			<div class="ach-filter">
-				<i id="search-icon" class="fa fa-search"></i><input class="filter-text" id="search_input" placeholder="Filter achievements">
+				<i id="search-icon" class="fa fa-search"></i><input class="filter-text" id="filter" placeholder="Filter achievements">
 				<span class="view-controls">
 					<span class="control-label">Change view:</span>
 					<a href="#" id="grid-view" class="btn-link"><i class="fa fa-th"></i></a>
@@ -40,12 +40,19 @@
 			<div class="info-panel display-none" id="stats">
 				<h2>Stats</h2>
 				<p>Achieved: <span id="num-achieved"></span> / <span id="total-achieved"></span></p>
+				<footer><a href="#" id="reset-game">Reset game</a></footer>
 			</div>
 
 			<div class="ach-list">
-				<ul id="search_list" class="ach-view ach-grid">
-					<li id="no_results" class="no-results display-none">No matching achievements.</li>
+				<div id="no_results" class="no-results display-none">No matching achievements.</div>
+				<ul id="achievements" class="ach-view ach-grid">
+					
 				</ul>
+				<div id="page-controls" class="page-controls">
+					<a href="#" id="prev-page" class="btn-link"><i class="fa fa-chevron-left"></i></a>
+					
+					<a href="#" id="next-page" class="btn-link"><i class="fa fa-chevron-right"></i></a>
+				</div>
 			</div>
 
 			<div class="ach-alerts">
