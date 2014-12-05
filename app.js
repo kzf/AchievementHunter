@@ -1,5 +1,28 @@
 $(function() {
 
+	var Storage = {
+		load: function() {
+			this.local = JSON.parse(localStorage["achievements"]);
+			for (var _id in this.local) {
+				console.log(_id);
+				if (this.local.hasOwnProperty(_id) && Achievements.by_id[_id]) {
+					Achievements.give(Achievements.by_id[_id], true);
+				}
+			}
+		},
+		save: function() {
+			console.log(this);
+			var self = this;
+			Achievements.list.forEach(function(a) {
+				if (a.achieved) {
+					self.local[a.title] = true;
+				}
+			});
+			localStorage["achievements"] = JSON.stringify(this.local);
+		},
+		local: {}
+	};
+
 	var Alerts = {
 		alerts: [],
 		el: $(".ach-alerts"),
@@ -47,11 +70,14 @@ $(function() {
 
   var Achievements = {
   	list: [],
-  	add: function(a) {
+  	by_id: {},
+  	add: function(a, _id) {
+  		a._id = _id;
+  		this.by_id[a.title] = a;
   		this.list.push(a);
   		this.total++;
   	},
-  	addAll: function(o) {
+  	addAll: function(o, id_prefix) {
   		for (var a in o) {
 				if (o.hasOwnProperty(a)) {
 					Achievements.add(o[a]);
@@ -67,30 +93,36 @@ $(function() {
   	achievedEl: $("#num-achieved"),
   	totalEl: $("#total-achieved")
   };
-  Achievements.give = function(a) {
+  Achievements.give = function(a, silent) {
 		if (a.achieved) return;
 		a.achieved = true;
 		a.element.addClass("achieved");
 		a.labelEl.html(a.label);
 		a.titleEl.text(a.title);
 		a.descEl.text(a.desc);
-		Alerts.addAlert(a);
-		var lastAchieve = this.lastAchievementTime;
-		this.lastAchievementTime = Date.now();
-		if (this.lastAchievementTime - lastAchieve < 200) {
-			Achievements.give(Achievements.achBased.consecutive);
-		}
-		var achieved = ++this.achieved;
-		Achievements.achMilestones.forEach(function(n) {
-			if (n === achieved) {
-				setTimeout(
-					Achievements.give.bind(
-						Achievements, 
-						Achievements.achBased["have" + n]
-						), 500);
+		if (!silent) {
+			Alerts.addAlert(a);
+			/******
+			ACHIEVEMENT-BASED ACHIEVEMENTS
+			*******/
+			var lastAchieve = this.lastAchievementTime;
+			this.lastAchievementTime = Date.now();
+			if (this.lastAchievementTime - lastAchieve < 200) {
+				Achievements.give(Achievements.achBased.consecutive);
 			}
-		});
+			var achieved = ++this.achieved;
+			Achievements.achMilestones.forEach(function(n) {
+				if (n === achieved) {
+					setTimeout(
+						Achievements.give.bind(
+							Achievements, 
+							Achievements.achBased["have" + n]
+							), 500);
+				}
+			});
+		}
 		this.updateStats();
+		Storage.save();
 	}
 
 	/****
@@ -125,7 +157,9 @@ $(function() {
 	Achievements.keypress = {
 		chars: "abcdefghijklmnopqrstuvwxyz",
 		digits: "1234567890",
-		map: {},
+		milestones: [10, 50, 100, 200, 500, 1000, 2000],
+		total: 0,
+		map: {}
 	};
 
 	Achievements.keypress.chars.split("").forEach(function(c) {
@@ -144,18 +178,40 @@ $(function() {
 	Achievements.keypress.map["C"].spoiler = 1;
 	Achievements.keypress.map["D"].spoiler = 1;
 
+	Achievements.keypress.digits = {
+		ach: {}
+	};
 	for (var i = 1; i <= 10; i++) {
 		var c = i < 10 ? i : 0;
+		var target = i < 7 ? Math.pow(2, i) : 107 - i;
 		var a = {
 		    title: "Press " + c,
 		    label: c,
-		    desc: "Press the " + c + " key " + Math.pow(2, i) + " times.",
+		    target: target,
+		    desc: "Press the " + c + " key " + target + " times.",
 		    spoiler: 1,
 		    presses: 0
 		  };
 		Achievements.add(a);
-		Achievements.keypress.map[i] = a;
+		Achievements.keypress.digits.ach[c] = a;
 	}
+	Achievements.keypress.digits.ach[5].desc += " Spotted the pattern?";
+	Achievements.keypress.digits.ach[6].desc += " Getting bored yet?";
+	Achievements.keypress.digits.ach[7].desc += " Thought I'd make it a bit easier on you.";
+	Achievements.keypress.digits.ach[8].desc += " Even easier! Lucky you!";
+
+	Achievements.keypress.totals = {};
+	Achievements.keypress.milestones.forEach(function(c) {
+		var a = {
+		    title: "Press " + c + " keys",
+		    label: "<span class='label-s'><i class='fa fa-keyboard-o'></i><br>" + c + "</span>",
+		    desc: "Press " + c + " keys.",
+		    spoiler: 2,
+		    presses: 0
+		  };
+		Achievements.keypress.totals[c] = a;
+	})
+	Achievements.addAll(Achievements.keypress.totals);
 
 	Achievements.keypress.gg = {
 	    title: "Good Game",
@@ -224,7 +280,15 @@ $(function() {
 		console.log(e);
 		var letter = String.fromCharCode(e.keyCode);
 		console.log(e.keyCode, letter);
-		var a = Achievements.keypress.map[letter];
+		var a;
+		Achievements.keypress.total++;
+		/*** TOTAL PRESSES ***/
+		a = Achievements.keypress.totals[Achievements.keypress.total];
+		if (a) {
+			Achievements.give(a);
+		}
+		/*** LETTERS ****/
+		a = Achievements.keypress.map[letter];
 		if (a) {
 			a.presses++;
 			var lastTime = a.lastPressed;
@@ -247,6 +311,15 @@ $(function() {
 				}
 			}
 		}
+		/**** DIGITS *****/
+		a = Achievements.keypress.digits.ach[letter];
+		if (a) {
+			a.presses++;
+			if (a.presses === a.target) {
+				Achievements.give(a);
+			}
+		}
+		/**** NON-ALPHANUMERIC CHARACTERS ****/
 		if (e.keyCode === 20) {
 			Achievements.give(Achievements.keypress.caps);
 		}
@@ -441,14 +514,14 @@ $(function() {
 
 	Achievements.ui.filter = {
 		title: "Filter",
-		label: "<i class='fa fa-search'></i>",
+		label: "<i class='fa fa-filter'></i>",
 		desc: "Used the filter box to filter achievements.",
 		spoiler: 1
 	}
 
 	Achievements.ui.clearsearch = {
 		title: "Clear",
-		label: "<i class='fa fa-search'>*</i>",
+		label: "<i class='fa fa-search'></i>",
 		desc: "Discovered that clicking on the search icon clears the search box!",
 		spoiler: 0
 	}
@@ -552,6 +625,8 @@ $(function() {
 		}
 		$('#search_input').val("").change();
 	})
+
+	Storage.load();
 
 	Achievements.updateStats();
 
