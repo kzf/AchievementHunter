@@ -109,10 +109,12 @@ $(function() {
 			title: "Earn " + n + " Achievements",
 	    label: "<span class='label-s'><i class='fa fa-trophy'></i>" + n + "</span>",
 	    desc: "Great start, but there are more to find. Keep going!",
-	    spoiler: 1
+	    spoiler: 0
 		}
 	});
 	Achievements.achBased["have1"].title = "Earn an achievement";
+	Achievements.achBased["have1"].spoiler = 1;
+	Achievements.achBased["have5"].spoiler = 1;
 
 	Achievements.addAll(Achievements.achBased);
 
@@ -129,12 +131,16 @@ $(function() {
 		    title: "Press " + c,
 		    label: c,
 		    desc: "Press the " + c + " key.",
-		    spoiler: 1,
+		    spoiler: 0,
 		    presses: 0
 		  };
 		Achievements.add(a);
 		Achievements.keypress.map[c.toUpperCase()] = a;
 	});
+	Achievements.keypress.map["A"].spoiler = 1;
+	Achievements.keypress.map["B"].spoiler = 1;
+	Achievements.keypress.map["C"].spoiler = 1;
+	Achievements.keypress.map["D"].spoiler = 1;
 
 	Achievements.keypress.gg = {
 	    title: "Good Game",
@@ -144,8 +150,7 @@ $(function() {
 	};
 	Achievements.add(Achievements.keypress.gg);
 
-	Achievements.keypress.map["Y"].title = "Press y";
-	Achievements.keypress.map["Y"].desc = "Oops, it must have been stuck.";
+	Achievements.keypress.map["U"].desc = "Oops, it must have been stuck.";
 
 	Achievements.keypress.caps = {
 	    title: "LOUD NOISES",
@@ -161,13 +166,13 @@ $(function() {
 		console.log(e.keyCode, letter);
 		var a = Achievements.keypress.map[letter];
 		if (a) {
-			a.presses += 1;
+			a.presses++;
 			var lastTime = a.lastPressed;
 			a.lastPressed = Date.now();
 			if (letter === 'G' && lastTime && a.lastPressed - lastTime < 200) {
 				Achievements.give(Achievements.keypress.gg);
-			} else if (letter === 'Y') {
-				if (a.presses === 5) {
+			} else if (letter === 'U') {
+				if (a.presses === 8) {
 					Achievements.give(a);
 				}
 			} else {
@@ -183,10 +188,10 @@ $(function() {
 		Window-based Achievements
 		****/
 	Achievements.window = {};
-	Achievements.window.shrinkH = {
+	Achievements.window.growH = {
 			title: "Does My Window Look Big In This?",
 	    label: "<i class='fa fa-arrows-h'></i>",
-	    desc: "Shrink the browser window horizontally.",
+	    desc: "Because you know I'm all about that space.",
 	    spoiler: 1
 	};
 	Achievements.window.shrinkV = {
@@ -195,7 +200,7 @@ $(function() {
 	    desc: "Shrink the browser vertically.",
 	    spoiler: 1
 	};
-	Achievements.window.growH = {
+	Achievements.window.shrinkH = {
 			title: "Rapid Weight Loss",
 	    label: "<i class='fa fa-arrows-h'></i>",
 	    desc: "Make the browser window skinny.",
@@ -211,7 +216,7 @@ $(function() {
 	Achievements.window.help = {
 			title: "#help",
 	    label: "<span class='label-xs'>#help</span>",
-	    desc: "Ask for help.",
+	    desc: "Ask for help in the address bar.",
 	    spoiler: 1
 	};
 
@@ -247,6 +252,20 @@ $(function() {
 	    label: "<span class='label-m'>A<span class='selected'>chi</span></span>",
 	    desc: "Find the greek letter in the title.",
 	    spoiler: 1
+	};
+
+	Achievements.window.narcissist = {
+			title: "Narcissist",
+	    label: "<i class='fa fa-" + (Math.random() < 0.5 ? "male" : "female") + "'></i>",
+	    desc: "It's all about me, me, me.",
+	    spoiler: 1
+	};
+
+	Achievements.window.em = {
+			title: "Emphasis",
+	    label: "<i class='fa fa-italic'></i>",
+	    desc: "It's semantic.",
+	    spoiler: 2
 	};
 
 	Achievements.addAll(Achievements.window);
@@ -296,11 +315,43 @@ $(function() {
 	});
 
 	addEventListener('mouseup', function() {
-		var sel = window.getSelection();
-		if (sel.toString() === 'chi') {
+		Achievements.clicks.total++;
+		Achievements.clicks.milestones.forEach(function(n) {
+			if (Achievements.clicks.total === n) {
+				Achievements.give(Achievements.clicks.ach[n]);
+			}
+		});
+		var sel = window.getSelection().toString().toLowerCase();
+		if (sel === 'chi') {
 			Achievements.give(Achievements.window.selection);
+		} else if (sel === 'me' || sel === 'i') {
+			Achievements.give(Achievements.window.narcissist);
+		} else if (sel === 'em') {
+			Achievements.give(Achievements.window.em);
 		}
 	});
+
+	/****
+		Clicking Achievements
+		****/
+	Achievements.clicks = {
+		total: 0,
+		milestones: [25, 50, 100, 150, 200, 250, 500],
+		ach: {}
+	};
+	Achievements.clicks.milestones.forEach(function(n) {
+		Achievements.clicks.ach[n] = {
+			title: "Click " + n + " Times",
+	    label: "<span class='label-s'><i class='fa fa-location-arrow'></i>" + n + "</span>",
+	    desc: "You clicked " + n + " times. Are you making cookies or something?",
+	    spoiler: 0
+		}
+	});
+	Achievements.clicks.ach[25].spoiler = 1;
+	Achievements.clicks.ach[200].desc = "There are no more achievements for clicking, I swear.";
+	Achievements.clicks.ach[250].desc = "No, really, this is the last one. Please rest your fingers.";
+	Achievements.clicks.ach[500].desc = "Seriously. For real this time. What would the next one even be? 1000? That's crazy.";
+	Achievements.addAll(Achievements.clicks.ach);
 
 	/****
 		UI Achievements
