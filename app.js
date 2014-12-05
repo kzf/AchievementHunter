@@ -68,6 +68,13 @@ $(function() {
   		total: $("#total-achieved")
   	},
   	/****
+			PAGING
+			*****/
+		paging: {
+			current: $("#current-page"),
+			total: $("#total-pages")
+  	},
+  	/****
   		Save references to UI elements
   		*****/
 		achievements: $("#achievements"),
@@ -128,7 +135,7 @@ $(function() {
 				return b;
 			},
 			achievement: function(a) {
-				a.element = $("<li>").addClass("achievement").addClass("display-none");
+				a.element = $("<li>").addClass("achievement");
 			  a.labelEl = $("<span>").text("?").addClass("ach-label");
 			  if (a.spoiler > 0) a.labelEl.html(a.label);
 			  a.titleEl = $("<h3>").text("???").addClass("ach-title");
@@ -136,6 +143,7 @@ $(function() {
 			  a.descEl = $("<span>").text("???").addClass("ach-desc");
 			  if (a.spoiler > 1) a.descEl.html(a.desc);
 			  a.tooltipEl = $("<div>").addClass("tooltip").append(a.titleEl).append(a.descEl);
+			  //var tooltipWrapper = $("<div>").addClass("tooltip-wrapper").append(a.tooltipEl);
 			  a.element.append(a.labelEl).append(a.tooltipEl);
 			}
 		}
@@ -146,20 +154,30 @@ $(function() {
   	*********/
   var Paging = {
   	grid: false,
+  	total: null,
   	maxGridRows: 5,
   	maxListRows: 6,
   	cols: null,
   	perPage: 20,
-
-  	pageStart: false,
-  	update: function() {
-  		if (!this.pageStart) {
-  			this.pageStart = 0;
+  	currentPage: null,
+  	totalPages: null,
+  	width: null,
+  	update: function(n) {
+  		//console.log(n);
+  		var filtered = false;
+  		if (!n) {
+  			if (!this.total) {
+  				var n = Achievements.total;
+  			} else {
+  				var n = this.total;
+  			}
+  		} else {
+  			filtered = true;
   		}
+  		this.total = n;
   		if (UI.achView.grid) {
-
   			if (!this.grid) {
-	  			UI.achievements.css("height", 58 * this.maxGridRows + "px");
+	  			UI.achievements.css("max-height", 58 * this.maxGridRows + "px");
 	  			this.grid = true;
 	  		}
   			var width = window.innerWidth;
@@ -168,59 +186,39 @@ $(function() {
   			}
   			var cols = Math.floor((width-28)/58);
 
-  			if (this.cols !== cols) {
-  				UI.achList.css("width", cols*58 + 18 + "px");
-
-  				this.clearPage(this.pageStart);
-  				this.perPage = cols * this.maxGridRows;
-  				var start = this.pageStart;
-  				this.pageStart = false;
-  				this.showPage(start);
+  			if (this.cols !== cols || filtered) {
+  				this.width = cols*58 + 18;
+  				UI.achList.css("width", this.width + "px");
+  				this.cols = cols;
+  				this.totalPages = Math.ceil(this.total/(this.maxGridRows*cols));
+  				UI.paging.total.text(this.totalPages);
+  				this.showPage(0, true);
   			}
 
   		} else {
   			if (this.grid) {
-  				console.log("A");
   				UI.achList.css("width", "");
 	  			UI.achievements.css("height", "");
-	  			this.clearPage(this.pageStart);
-  				this.perPage = this.maxListRows;
-  				var start = this.pageStart;
-  				this.pageStart = false;
-  				this.showPage(start);
+
 	  			this.grid = false;
 	  		}
   		}
   	},
-  	clearPage: function(start) {
-  		for (var i = start; i < start + this.perPage; i++) {
-				if (i < Achievements.total) {
-					Achievements.list[i].element.addClass("display-none");
-				}
-  		}
-  	},
-  	showPage: function(start) {
-  		if (this.pageStart !== false) {
-  			this.clearPage(this.pageStart);
-  		}
-  		this.pageStart = start;
-  		for (var i = start; i < start + this.perPage; i++) {
-  			if (i < Achievements.total) {
-  				Achievements.list[i].element.removeClass("display-none");
-  			}
-  		}
+  	showPage: function(i, noanimate) {
+  		this.currentPage = i;
+  		UI.paging.current.text(i + 1);
+  		//UI.achievements.scrollTop(58 * this.maxGridRows * i);
+  		UI.achievements.animate({ scrollTop: 58 * this.maxGridRows * i + "px" }, noanimate ? 0 : 200);
   	},
   	nextPage: function() {
-  		if (this.pageStart + this.perPage < Achievements.total) {
-  			this.showPage(this.pageStart + this.perPage);
+  		console.log(this.currentPage, this.totalPages);
+  		if (this.currentPage < this.totalPages - 1) {
+  			this.showPage(++this.currentPage);
   		}
   	},
   	prevPage: function() {
-			if (this.pageStart - this.perPage > 0) {
-				console.log("A");
-  			this.showPage(this.pageStart - this.perPage);
-  		} else {
-  			this.showPage(0);
+			if (this.currentPage > 0) {
+  			this.showPage(--this.currentPage);
   		}
   	}
   };
@@ -438,9 +436,9 @@ $(function() {
 	Achievements.addAll(Achievements.keypress.ctrl);
 
 	addEventListener("keydown", function(e) {
-		console.log(e);
+		//console.log(e);
 		var letter = String.fromCharCode(e.keyCode);
-		console.log(e.keyCode, letter);
+		//console.log(e.keyCode, letter);
 		var a;
 		Achievements.keypress.total++;
 		/*** TOTAL PRESSES ***/
@@ -454,7 +452,6 @@ $(function() {
 			a.presses++;
 			var lastTime = a.lastPressed;
 			if (!e.altKey && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
-				console.log("A");
 				a.lastPressed = Date.now();
 				if (letter === 'G' && lastTime && a.lastPressed - lastTime < 200) {
 					Achievements.give(Achievements.keypress.gg);
@@ -749,10 +746,31 @@ $(function() {
 	  UI.achievements.append(a.element);
 	});
 
+	// Tooltips
+	$(".achievement").hover(function() {
+		var self = $(this);
+		var tooltip = self.find(".tooltip");
+		if (UI.achView.grid) {
+			tooltip.css("top", self.position().top + 50 + "px");
+			var w = tooltip.width();
+			var x = self.position().left - w/2 + 25;
+			if (x > Paging.width - w - 50) {
+				x = Paging.width - w - 50
+			} else if (x < 10) {
+				x = 10;
+			}
+			tooltip.css("left", x + "px");
+		}
+		tooltip.addClass("show-tooltip");
+	}, function() {
+		$(this).find(".tooltip").removeClass("show-tooltip")
+	});
+
 
 	UI.filter.fastLiveFilter('#achievements', {
 		timeout: 100,
 		callback: function(total) {
+			Paging.update(total);
 			/*****
 				SEARCH INPUT Achievements
 				******/
