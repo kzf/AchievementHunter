@@ -72,7 +72,8 @@ $(function() {
 			*****/
 		paging: {
 			current: $("#current-page"),
-			total: $("#total-pages")
+			total: $("#total-pages"),
+			controls: $("#page-controls")
   	},
   	/****
   		Save references to UI elements
@@ -165,7 +166,7 @@ $(function() {
   	update: function(n) {
   		//console.log(n);
   		var filtered = false;
-  		if (!n) {
+  		if (typeof n === 'undefined') {
   			if (!this.total) {
   				var n = Achievements.total;
   			} else {
@@ -176,11 +177,14 @@ $(function() {
   		}
   		this.total = n;
   		if (UI.achView.grid) {
+
   			if (!this.grid) {
 	  			UI.achievements.css("max-height", 58 * this.maxGridRows + "px");
 	  			this.grid = true;
+	  			UI.paging.controls.show();
 	  		}
   			var width = window.innerWidth;
+
   			if (width > 600) {
   				width = 600;
   			}
@@ -196,12 +200,17 @@ $(function() {
   			}
 
   		} else {
+  			
   			if (this.grid) {
   				UI.achList.css("width", "");
-	  			UI.achievements.css("height", "");
-
+	  			UI.achievements.css("max-height", "");
 	  			this.grid = false;
+	  			this.cols = null;
+	  			this.totalPages = 1;
+	  			this.showPage(0, true);
+	  			UI.paging.controls.hide();
 	  		}
+
   		}
   	},
   	showPage: function(i, noanimate) {
@@ -211,7 +220,6 @@ $(function() {
   		UI.achievements.animate({ scrollTop: 58 * this.maxGridRows * i + "px" }, noanimate ? 0 : 200);
   	},
   	nextPage: function() {
-  		console.log(this.currentPage, this.totalPages);
   		if (this.currentPage < this.totalPages - 1) {
   			this.showPage(++this.currentPage);
   		}
@@ -259,6 +267,7 @@ $(function() {
 		a.labelEl.html(a.label);
 		a.titleEl.text(a.title);
 		a.descEl.text(a.desc);
+		this.achieved++;
 		if (!silent) {
 			Alerts.addAlert(a);
 			/******
@@ -269,7 +278,7 @@ $(function() {
 			if (this.lastAchievementTime - lastAchieve < 200) {
 				Achievements.give(Achievements.achBased.consecutive);
 			}
-			var achieved = ++this.achieved;
+			var achieved = this.achieved;
 			Achievements.achMilestones.forEach(function(n) {
 				if (n === achieved) {
 					setTimeout(
@@ -279,6 +288,15 @@ $(function() {
 							), 500);
 				}
 			});
+			//if (achieved === this.total - 1) {
+			if (achieved === 12) {
+				console.log("GIVING");
+				// Give the "all achievements" achievement after a short delay
+				setTimeout(Achievements.give.bind(
+							Achievements, 
+							Achievements.achBased["all"]
+				), 1000);
+			}
 		}
 		this.updateStats();
 		Storage.save();
@@ -308,6 +326,13 @@ $(function() {
 	Achievements.achBased["have1"].spoiler = 1;
 	Achievements.achBased["have5"].spoiler = 1;
 
+	Achievements.achBased["all"] = {
+		title: "Earn All Achievements",
+    label: "<span class='label-s'><i class='fa fa-trophy'></i><br><i class='fa fa-trophy'></i><i class='fa fa-trophy'></i></span>",
+    desc: "How did you earn this achievement without already having it? Oh well, I guess I can't take it away from you now.",
+    spoiler: 1
+	};
+
 	Achievements.addAll(Achievements.achBased);
 
 	/****
@@ -318,7 +343,8 @@ $(function() {
 		digits: "1234567890",
 		milestones: [10, 50, 100, 200, 500, 1000, 2000],
 		total: 0,
-		map: {}
+		map: {},
+		shift: {}
 	};
 
 	Achievements.keypress.chars.split("").forEach(function(c) {
@@ -336,6 +362,80 @@ $(function() {
 	Achievements.keypress.map["B"].spoiler = 1;
 	Achievements.keypress.map["C"].spoiler = 1;
 	Achievements.keypress.map["D"].spoiler = 1;
+
+
+	Achievements.keypress.chars.split("").forEach(function(c) {
+		var b = {
+		    title: "Type a capital " + c,
+		    label: c.toUpperCase(),
+		    desc: "Hold shift while you press the " + c + " key.",
+		    spoiler: 0,
+		    presses: 0
+		  };
+		Achievements.keypress.shift[c.toUpperCase()] = b;
+	});
+	Achievements.keypress.shift["1"] = {
+		title: "Bang",
+		label: "!",
+		desc: "Press !.",
+		spoiler: 0
+	}; // ! key
+	Achievements.keypress.shift["2"] = {
+		title: "Too Hot To Handle",
+		label: "@",
+		desc: "Press @.",
+		spoiler: 0
+	}; // @ key
+	Achievements.keypress.shift["3"] = {
+		title: "Pound",
+		label: "#",
+		desc: "Press #.",
+		spoiler: 0
+	}; // # key
+	Achievements.keypress.shift["4"] = {
+		title: "Rain",
+		label: "$",
+		desc: "Press $.",
+		spoiler: 0
+	}; // $ key
+	Achievements.keypress.shift["5"] = {
+		title: "Jelly",
+		label: "%",
+		desc: "Press %.",
+		spoiler: 0
+	}; // % key
+	Achievements.keypress.shift["6"] = {
+		title: "Brer Rabbit",
+		label: "^",
+		desc: "Press ^.",
+		spoiler: 0
+	}; // ^ key
+	Achievements.keypress.shift["7"] = {
+		title: "And Per Sand",
+		label: "&",
+		desc: "Press &.",
+		spoiler: 0
+	}; // & key
+	Achievements.keypress.shift["8"] = {
+		title: "Snowflake",
+		label: "*",
+		desc: "Press *.",
+		spoiler: 0
+	}; // * key
+	Achievements.keypress.shift["9"] = {
+		title: "Frown",
+		label: "(",
+		desc: "Press (.",
+		spoiler: 0
+	}; // ( key
+	Achievements.keypress.shift["0"] = {
+		title: "Smile",
+		label: ")",
+		desc: "Press ).",
+		spoiler: 0
+	}; // ) key
+	Achievements.addAll(Achievements.keypress.shift);
+	
 
 	Achievements.keypress.digits = {
 		ach: {}
@@ -438,7 +538,7 @@ $(function() {
 	addEventListener("keydown", function(e) {
 		//console.log(e);
 		var letter = String.fromCharCode(e.keyCode);
-		//console.log(e.keyCode, letter);
+		console.log(e.keyCode, letter);
 		var a;
 		Achievements.keypress.total++;
 		/*** TOTAL PRESSES ***/
@@ -469,9 +569,17 @@ $(function() {
 				}
 			}
 		}
+		/*** SHIFT + KEYS ****/
+		a = Achievements.keypress.shift[letter];
+		if (a) {
+			a.presses++;
+			if (!e.altKey && !e.ctrlKey && !e.metaKey && e.shiftKey) {
+				Achievements.give(a);
+			}
+		}
 		/**** DIGITS *****/
 		a = Achievements.keypress.digits.ach[letter];
-		if (a) {
+		if (a && !e.altKey && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
 			a.presses++;
 			if (a.presses === a.target) {
 				Achievements.give(a);
@@ -720,7 +828,7 @@ $(function() {
 		*****/
 	Achievements.inter = {};
 	Achievements.inter.click = {
-		title: "Touch Me",
+		title: "Just Like That",
 		label: "<i class='fa fa-rotate-right'></i>",
 		desc: "Click on this achievement.",
 		spoiler: 1
@@ -774,7 +882,7 @@ $(function() {
 			/*****
 				SEARCH INPUT Achievements
 				******/
-			var q = UI.achievements.val().toLowerCase();
+			var q = UI.filter.val().toLowerCase();
 			if (q !== "") {
 				Achievements.give(Achievements.ui.filter);
 			}
@@ -788,6 +896,11 @@ $(function() {
 				Achievements.give(Achievements.ui.noresults);
 			} else {
 				UI.noResults.addClass("display-none");
+			}
+			if (Paging.totalPages <= 1) {
+				UI.paging.controls.hide();
+			} else {
+				UI.paging.controls.show();
 			}
 		}
 	});

@@ -309,6 +309,30 @@ a:hover, a:focus {
 	*********/
 .page-controls {
 	text-align: center;
+	padding: 6px 0;
+}
+#current-page {
+	padding-left: 10px;
+}
+#total-pages {
+	padding-right: 10px;
+}
+
+/*********
+	STATS
+	*********/
+
+.info-panel {
+	max-width: 600px;
+	margin: 0 auto;
+	background: #FDE3A7;
+	border-radius: 5px;
+	padding: 10px;
+	margin-bottom: 10px;
+}
+.info-panel h2 {
+	margin: 0;
+	padding: 0;
 }
 
 /********
