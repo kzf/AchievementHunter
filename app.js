@@ -181,7 +181,6 @@ $(function() {
   			if (!this.grid) {
 	  			UI.achievements.css("max-height", 58 * this.maxGridRows + "px");
 	  			this.grid = true;
-	  			UI.paging.controls.show();
 	  		}
   			var width = window.innerWidth;
 
@@ -207,11 +206,17 @@ $(function() {
 	  			this.grid = false;
 	  			this.cols = null;
 	  			this.totalPages = 1;
-	  			this.showPage(0, true);
-	  			UI.paging.controls.hide();
 	  		}
 
+
+
   		}
+
+  		if (Paging.totalPages <= 1) {
+				UI.paging.controls.hide();
+			} else {
+				UI.paging.controls.show();
+			}
   	},
   	showPage: function(i, noanimate) {
   		this.currentPage = i;
@@ -730,8 +735,9 @@ $(function() {
 				Achievements.give(Achievements.clicks.ach[n]);
 			}
 		});
-		var sel = window.getSelection().toString().toLowerCase();
-		if (sel === 'chi') {
+		var selection = window.getSelection();
+		var sel = selection.toString().toLowerCase();
+		if (sel === 'chi' && selection.baseNode.data === "Achievement Hunter") {
 			Achievements.give(Achievements.window.selection);
 		} else if (sel === 'me' || sel === 'i') {
 			Achievements.give(Achievements.window.narcissist);
@@ -896,11 +902,6 @@ $(function() {
 				Achievements.give(Achievements.ui.noresults);
 			} else {
 				UI.noResults.addClass("display-none");
-			}
-			if (Paging.totalPages <= 1) {
-				UI.paging.controls.hide();
-			} else {
-				UI.paging.controls.show();
 			}
 		}
 	});
