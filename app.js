@@ -293,14 +293,12 @@ $(function() {
 							), 500);
 				}
 			});
-			//if (achieved === this.total - 1) {
-			if (achieved === 12) {
-				console.log("GIVING");
+			if (achieved === this.total - 1) {
 				// Give the "all achievements" achievement after a short delay
 				setTimeout(Achievements.give.bind(
 							Achievements, 
 							Achievements.achBased["all"]
-				), 1000);
+				), 15000);
 			}
 		}
 		this.updateStats();
@@ -680,6 +678,13 @@ $(function() {
     spoiler: 2
 	};
 
+	Achievements.window.scrollfast = {
+		title: "Gotta Go Fast",
+    label: "<span class='label-s'><i>zoom</i></span>",
+    desc: "Wheeeeeeeeeeee.",
+    spoiler: 2
+	};
+
 	Achievements.addAll(Achievements.window);
 
 	Achievements.window.lastW = window.innerWidth;
@@ -743,6 +748,21 @@ $(function() {
 			Achievements.give(Achievements.window.narcissist);
 		} else if (sel === 'em') {
 			Achievements.give(Achievements.window.em);
+		}
+	});
+
+	var lastScroll = null;
+	addEventListener('scroll', function(e) {
+		if (lastScroll) {
+			var dist = Math.abs($(window).scrollTop() - lastScroll.top);
+			var delay = e.timeStamp - lastScroll.timeStamp;
+			if (dist/delay > 25) {
+				Achievements.give(Achievements.window.scrollfast);
+			}
+		}
+		lastScroll = {
+			top: $(window).scrollTop(),
+			timeStamp: e.timeStamp
 		}
 	});
 
