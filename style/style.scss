@@ -1,0 +1,441 @@
+@import url(http://fonts.googleapis.com/css?family=Droid+Serif);
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	font-family: Droid Serif, serif;
+	color: #333;
+	font-size: 14px;
+	transition: background-color 0.2s ease;
+}
+
+header {
+	border-bottom: 5px solid #EB9532;
+	box-shadow: 0 4px 2px -2px #ccc;
+}
+
+.page {
+	width: 95%;
+	max-width: 850px;
+	margin: 0 auto;
+}
+
+
+/******
+	DARK THEME
+	*******/
+
+body.dark {
+	color: #ddd;
+	background-color: #333;
+}
+
+body.dark header {
+	border-bottom: 5px solid darkred;
+	box-shadow: 0 4px 2px -2px black;
+}
+
+/****
+	MAIN MENU
+	*****/
+
+h1 {
+	font-size: 28px;
+	margin-top: 20px;
+	margin-bottom: 10px;
+	font-weight: 500;
+	text-align: center;
+	text-shadow: 1px 1px 2px #bbb;
+}
+
+.theme-selector {
+	width: 100%;
+	font-size: 80%;
+	text-align: center;
+}
+
+a {
+	color: #337ab7;
+	text-decoration: none;
+}
+
+a:hover, a:focus {
+	color: #23527c;
+	text-decoration: underline;
+}
+
+/*****
+	FILTER AREA
+	*****/
+
+.ach-filter {
+	text-align: center;
+}
+
+.filter-text {
+	display: inline-block;
+	padding: 4px 12px;
+	margin: 10px;
+	border-radius: 5px;
+	border: 1px solid #cccccc;
+	box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+	outline: none;
+	width: 175px;
+}
+
+.filter-text:focus {
+	box-shadow: 0 0 5px rgba(65, 131, 215, 1);
+  border: 1px solid rgba(65, 131, 215, 1);
+}
+
+.btn-link {
+	background: #ccc;
+	padding: 3px 6px;
+	border-radius: 10px;
+	transition: all 0.25s ease;
+}
+
+.btn-link:hover {
+	color: black;
+	background-color: #999;
+}
+
+.btn-link:active {
+	background-color: #555;
+}
+
+.no-results {
+	width: 100%;
+	padding: 10px;
+	font-size: 120%;
+	display: block;
+}
+
+/*****
+	ACHIEVEMENTS BARS STYLE
+	******/
+
+.ach-list {
+	background-color: #EB9532;
+	border-radius: 5px;
+	padding: 5px;
+	max-width: 600px;
+	margin: 0 auto;
+}
+
+.ach-view {
+	padding: 0;
+	margin: 0;
+	text-align: left;
+}
+
+.achievement {
+	display: block;
+	margin-bottom: 6px;
+	border: 2px solid #8e7154;
+  background: #eabe8c;
+  border-radius: 5px;
+  padding: 6px;
+  min-height: 72px;
+  color: #8e7154;
+}
+
+.achievement.achieved {
+	background-color: #FDE3A7;
+	border-color: #894400;
+	color: #333;
+}
+
+.achieved .ach-label {
+  background-color: orange;
+  position: relative;
+  color: #894400;
+}
+
+.achieved .ach-label::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 50px;
+  height: 30px;
+  background: -webkit-linear-gradient(top, rgba(255,255,255,0.6) 0%,rgba(255,255,255,0.05) 100%);
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+  border-bottom-right-radius: 30px 10px;
+  border-bottom-left-radius: 30px 10px;
+}
+
+.ach-label {
+	display: -webkit-flex;
+  -webkit-align-items: center;
+  -webkit-justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  font-size: 150%;
+  background: #eabe8c;
+  color: #8e7154;
+  border-radius: 5px;
+  margin: 2px 0 0 2px;
+  transition: background-color 0.2s ease;
+  float: left;
+  text-align: center;
+}
+
+.ach-title {
+	margin: 2px 0px 10px 60px;
+}
+.ach-desc {
+	display: block;
+	margin-left: 60px;
+}
+
+/*****
+	ACHIEVEMENTS GRID STYLE
+	******/
+
+.ach-grid {
+	text-align: left;
+	padding-left: 6px;
+	overflow: hidden;
+}
+
+.ach-grid .achievement {
+  display: inline-block;
+  vertical-align:top;
+  margin-right: 6px;
+  margin-bottom: 6px;
+  border: none;
+  background: none;
+  border-radius: 0;
+  padding: 0;
+  min-height: 0;
+}
+
+.ach-grid .ach-label {
+	border: 2px solid #8e7154;
+	float: none;
+}
+.ach-grid .achieved .ach-label {
+	border: 2px solid #894400;
+}
+.ach-grid .achieved .ach-label::before {
+	width: 46px;
+}
+.ach-grid .ach-title {
+	margin: 2px 0px 10px 0px;
+}
+.ach-grid .ach-desc {
+	margin-left: 0px;
+}
+
+/*****
+	LABEL STYLES
+	*****/
+
+.label-xs {
+	display: block;
+	font-size: 10px;
+}
+
+.label-s {
+	display: block;
+	font-size: 14px;
+}
+
+.label-m {
+	display: block;
+	font-size: 17px;
+}
+
+.inverse-icon {
+	color: white;
+}
+
+.icon-double {
+	position: relative;
+	top: -2px;
+	left: -2px;
+	text-shadow: 3px 5px 0px #8e7154;
+}
+
+.selected {
+	background: #4185ea;
+	color: #ccc;
+}
+
+/*****
+	Tooltip in grid view 
+	******/
+.ach-list {
+	position: relative;
+}
+
+.ach-grid .achievement {
+	position: static;
+}
+
+.ach-grid li .tooltip {
+	display: none;
+	position: absolute;
+	z-index: 2;
+	width: 300px;
+	background-color: rgba(253, 227, 167, 0.90);
+	border: 1px solid #333;
+	margin: 6px 0 0 0;
+	padding: 15px;
+	border-radius: 5px;
+	text-align: left;
+	box-shadow: 0 0 5px rgba(133, 133, 133, 1);
+}
+
+.show-tooltip {
+	display: block !important;
+}
+
+.ach-grid .ach-title {
+	margin-top: 0;
+	margin-bottom: 8px;
+}
+
+/********
+	PAGE CONTROLS
+	*********/
+.page-controls {
+	text-align: center;
+	padding: 6px 0;
+}
+#current-page {
+	padding-left: 10px;
+}
+#total-pages {
+	padding-right: 10px;
+}
+
+/*********
+	STATS
+	*********/
+
+.info-panel {
+	max-width: 600px;
+	margin: 0 auto;
+	background: #FDE3A7;
+	border-radius: 5px;
+	padding: 10px;
+	margin-bottom: 10px;
+}
+.info-panel h2 {
+	margin: 0;
+	padding: 0;
+}
+
+/********
+	ALERTS
+	********/
+
+.ach-alerts {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+}
+
+.alert {
+	position: relative;
+	width: 300px;
+	border-radius: 0px 0px 5px 5px;
+	background-color: #FDE3A7;
+	padding: 10px;
+	margin: 5px auto;
+	min-height: 74px;
+	opacity: 1;
+	-webkit-animation: fadeAlert 5s normal forwards;
+}
+
+@-webkit-keyframes fadeAlert {
+	0% { opacity: 0; }
+	5% { opacity: 1; }
+	95% { opacity: 1; }
+	100% { opacity: 0; }
+}
+
+.alert::before {
+	content: "";
+	display: block;
+	width: 100%;
+	height: 2px;
+	background-color: #894400;
+	position: absolute;
+	left: 0;
+	top: -2px;
+	-webkit-animation: indicateFadeOut 5s normal linear forwards;
+}
+
+@-webkit-keyframes indicateFadeOut {
+	0% { width: 100%; }
+	100% { width: 0; }
+}
+
+.alert-title {
+	margin: 2px 0px 10px 60px;
+}
+
+.alert-desc {
+	display: block;
+	margin-left: 60px;
+}
+
+.pull-left {
+	float: left;
+}
+
+.alert-hide {
+	opacity: 0;
+	-webkit-animation: none;
+}
+
+/******
+  SMALL SCREENS
+  *******/
+
+.control-label {
+	display: none;
+}
+
+/*****
+	AT END
+	******/
+
+.display-none {
+	display: none !important;
+}
+
+/*******
+	BIG SCREENS
+	********/
+
+@media only screen and (min-width: 580px) {
+	.theme-selector {
+		width: initial;
+		float: right;
+	}
+
+	h1 {
+		font-size: 36px;
+		text-align: left;
+	}
+
+	.filter-text {
+		width: 275px;
+	}
+
+	.control-label {
+		display: inline-block;
+	}
+}
