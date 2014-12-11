@@ -10,6 +10,8 @@ $(function() {
 				if (this.local.hasOwnProperty(_id) && Achievements.by_id[_id]) {
 					Achievements.give(Achievements.by_id[_id], true);
 				}
+				Achievements.give(Achievements.ui.storage);
+				// TODO: Storage2, storage4
 			}
 		},
 		reset: function() {
@@ -110,6 +112,7 @@ $(function() {
 			  }),
 			stats: $("#toggle-stats").click(function() {
 			  	UI.stats.container.toggleClass("display-none");
+			  	Achievements.give(Achievements.ui.stats);
 			  }),
 			reset: $("#reset-game").click(function() {
 			  	Storage.reset();
@@ -438,7 +441,42 @@ $(function() {
 		spoiler: 0
 	}; // ) key
 	Achievements.addAll(Achievements.keypress.shift);
+
+	Achievements.keypress.misc = {};
+	Achievements.keypress.misc[192] = { lower: '`', upper: '~' };
+	Achievements.keypress.misc[189] = { lower: '-', upper: '_' };
+	Achievements.keypress.misc[187] = { lower: '=', upper: '+' };
+	Achievements.keypress.misc[219] = { lower: '[', upper: '{' };
+	Achievements.keypress.misc[221] = { lower: ']', upper: '}' };
+	Achievements.keypress.misc[186] = { lower: ';', upper: ':' };
+	Achievements.keypress.misc[220] = { lower: '\\', upper: '|' };
+	Achievements.keypress.misc[222] = { lower: '\'', upper: '"' };
+	Achievements.keypress.misc[188] = { lower: ',', upper: '<' };
+	Achievements.keypress.misc[190] = { lower: '.', upper: '>' };
+	Achievements.keypress.misc[191] = { lower: '/', upper: '?' };
+	for (var k in Achievements.keypress.misc) {
+		if (Achievements.keypress.misc.hasOwnProperty(k)) {
+			var c = Achievements.keypress.misc[k];
+			c.achLower = {
+				title: "Type " + c.lower,
+				label: c.lower,
+				desc: "Press " + c.lower + ".",
+				spoiler: 0
+			};
+			Achievements.add(c.achLower);
+			c.achUpper = {
+				title: "Type " + c.upper,
+				label: c.upper,
+				desc: "Press " + c.upper + ".",
+				spoiler: 0
+			};
+			Achievements.add(c.achUpper);
+		}
+	}
 	
+
+	
+
 
 	Achievements.keypress.digits = {
 		ach: {}
@@ -578,6 +616,17 @@ $(function() {
 			a.presses++;
 			if (!e.altKey && !e.ctrlKey && !e.metaKey && e.shiftKey) {
 				Achievements.give(a);
+			}
+		}
+		/**** MISC KEYS *****/
+		a = Achievements.keypress.misc[e.keyCode];
+		if (a) {
+			if (!e.altKey && !e.ctrlKey && !e.metaKey) {
+				if (e.shiftKey) {
+					Achievements.give(a.achUpper);
+				} else {
+					Achievements.give(a.achLower);
+				}
 			}
 		}
 		/**** DIGITS *****/
@@ -733,7 +782,8 @@ $(function() {
 			Achievements.give(Achievements.window.focus);
 	});
 
-	addEventListener('mouseup', function() {
+	addEventListener('mouseup', function(e) {
+		//console.log(e);
 		Achievements.clicks.total++;
 		Achievements.clicks.milestones.forEach(function(n) {
 			if (Achievements.clicks.total === n) {
@@ -748,6 +798,9 @@ $(function() {
 			Achievements.give(Achievements.window.narcissist);
 		} else if (sel === 'em') {
 			Achievements.give(Achievements.window.em);
+		}
+		if (e.target.localName === 'a') {
+			Achievements.give(Achievements.ui.anchor);
 		}
 	});
 
@@ -792,61 +845,94 @@ $(function() {
 		UI Achievements
 		****/
 	Achievements.ui = {};
+	Achievements.ui.storage = {
+		title: "I Remember",
+		label: "<i class='fa fa-database'></i>",
+		desc: "Load your automatically saved game.",
+		spoiler: 1
+	};
+	Achievements.ui.storage2 = {
+		title: "Well Met",
+		label: "<i class='fa fa-database icon-double'></i>",
+		desc: "Come back twice.",
+		spoiler: 0
+	};
+	Achievements.ui.storage5 = {
+		title: "Friends Forever",
+		label: "<span class='label-s'><i class='fa fa-database icon-double'></i><i class='fa fa-database icon-double'></i></span>",
+		desc: "Come back four times.",
+		spoiler: 0
+	};
+
 	Achievements.ui.barView = {
 		title: "List View",
 		label: "<i class='fa fa-align-justify'></i>",
 		desc: "View your achievements in a list.",
 		spoiler: 2
-	}
+	};
 
 	Achievements.ui.gridView = {
 		title: "Grid View",
 		label: "<i class='fa fa-th'></i>",
 		desc: "Switch back to viewing your achievements in a grid.",
 		spoiler: 2
-	}
+	};
+
+	Achievements.ui.stats = {
+		title: "Statistician",
+		label: "<i class='fa fa-bar-chart'></i>",
+		desc: "View your stats.",
+		spoiler: 0
+	};
 
 	Achievements.ui.filter = {
 		title: "Filter",
 		label: "<i class='fa fa-filter'></i>",
 		desc: "Used the filter box to filter achievements.",
 		spoiler: 1
-	}
+	};
 
 	Achievements.ui.clearsearch = {
 		title: "Clear",
 		label: "<i class='fa fa-search'></i>",
 		desc: "Discovered that clicking on the search icon clears the search box!",
 		spoiler: 0
-	}
+	};
 
 	Achievements.ui.noresults = {
 		title: "Nothing To See Here",
 		label: "{}",
 		desc: "Failed to find any results.",
 		spoiler: 0
-	}
+	};
 
 	Achievements.ui.help = {
 		title: "I Need Somebody",
 		label: "<span class='label-xs'>H.E.L.P.</span>",
 		desc: "Ask for help.",
 		spoiler: 1
-	}
+	};
 
 	Achievements.ui.light = {
 		title: "Let There Be Light",
 		label: "<i class='fa fa-lightbulb-o inverse-icon'></i>",
 		desc: "Use the light theme.",
 		spoiler: 0
-	}
+	};
 
 	Achievements.ui.dark = {
 		title: "LIGHTS OUT!",
 		label: "<i class='fa fa-lightbulb-o'></i>",
 		desc: "Get ready for bed.",
 		spoiler: 0
-	}
+	};
+
+	Achievements.ui.anchor = {
+		title: "Sea Floor",
+		label: "<i class='fa fa-anchor'></i>",
+		desc: "Activate an anchor.",
+		spoiler: 0
+	};
 	Achievements.addAll(Achievements.ui);
 
 	/*****
@@ -858,14 +944,29 @@ $(function() {
 		label: "<i class='fa fa-rotate-right'></i>",
 		desc: "Click on this achievement.",
 		spoiler: 1
-	}
+	};
+
+	Achievements.inter.needy = {
+		title: "Needy",
+		label: "<i class='fa fa-rotate-right icon-double'></i>",
+		desc: "Do that to me one more time.",
+		clicked: 0,
+		spoiler: 1
+	};
+
+	Achievements.inter.repeat = {
+		title: "Repeat Customer",
+		label: "<i class='fa fa-rotate-left icon-double'></i>",
+		desc: "Once is never enough.",
+		spoiler: 0
+	};
 
 	Achievements.inter.ask = {
 		title: "You Only Have To Ask",
 		label: "<i class='fa fa-support'></i>",
 		desc: "Ask and you shall receive.",
 		spoiler: 1
-	}
+	};
 	Achievements.addAll(Achievements.inter);
 
 
@@ -931,7 +1032,7 @@ $(function() {
 			Achievements.give(Achievements.ui.clearsearch);
 		}
 		UI.filter.val("").change();
-	})
+	});
 
 	Storage.load();
 
@@ -945,7 +1046,15 @@ $(function() {
 		******/
 	Achievements.inter.click.labelEl.click(function() {
 		Achievements.give(Achievements.inter.click);
-	})
+	});
+	Achievements.inter.needy.labelEl.click(function() {
+		Achievements.inter.needy.clicked++;
+		if (Achievements.inter.needy.clicked === 15) {
+			Achievements.give(Achievements.inter.needy);
+		} else if (Achievements.inter.needy.clicked === 30) {
+			Achievements.give(Achievements.inter.repeat);
+		}
+	});
 
 
 });
