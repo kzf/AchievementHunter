@@ -1,5 +1,6 @@
 /****
 	ALERTS
+	Control messages to be shown when achievements are earnt
 	*****/
 var Alerts = {
 	alerts: [],
