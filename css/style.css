@@ -1,14 +1,15 @@
 @import url(http://fonts.googleapis.com/css?family=Droid+Serif);
 /******
-	DARK THEME
-	*******/
+  DARK THEME
+  *******/
 body.dark {
   color: #ddd;
   background-color: #333; }
 
 body.dark header {
   border-bottom: 5px solid #243662;
-  box-shadow: 0 4px 2px -2px black; }
+  -webkit-box-shadow: 0 4px 2px -2px black;
+          box-shadow: 0 4px 2px -2px black; }
 
 body.dark a {
   color: #90C0E8; }
@@ -49,8 +50,8 @@ body.dark .filter-text {
   color: #333; }
 
 /****
-	MAIN MENU
-	*****/
+  MAIN MENU
+  *****/
 h1 {
   font-size: 28px;
   margin-top: 20px;
@@ -73,8 +74,8 @@ a:hover, a:focus {
   text-decoration: underline; }
 
 /*****
-	FILTER AREA
-	*****/
+  FILTER AREA
+  *****/
 .ach-filter {
   text-align: center; }
 
@@ -84,12 +85,14 @@ a:hover, a:focus {
   margin: 10px;
   border-radius: 5px;
   border: 1px solid #cccccc;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   outline: none;
   width: 235px; }
 
 .filter-text:focus {
-  box-shadow: 0 0 5px #4183d7;
+  -webkit-box-shadow: 0 0 5px #4183d7;
+          box-shadow: 0 0 5px #4183d7;
   border: 1px solid #4183d7; }
 
 .btn-link {
@@ -97,7 +100,8 @@ a:hover, a:focus {
   color: #8F4D0D;
   padding: 3px 6px;
   border-radius: 10px;
-  transition: all 0.25s ease; }
+  -webkit-transition: all 0.25s ease;
+          transition: all 0.25s ease; }
 
 .btn-link:hover {
   color: black;
@@ -113,8 +117,8 @@ a:hover, a:focus {
   display: block; }
 
 /*****
-	ACHIEVEMENTS BARS STYLE
-	******/
+  ACHIEVEMENTS BARS STYLE
+  ******/
 .ach-list {
   background-color: #EB9532;
   border-radius: 5px;
@@ -155,7 +159,9 @@ a:hover, a:focus {
   left: 0px;
   width: 50px;
   height: 30px;
+  background: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, 0.6)), to(rgba(255, 255, 255, 0.05)));
   background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.05) 100%);
+  background: linear-gradient(top, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.05) 100%);
   border-top-right-radius: 5px;
   border-top-left-radius: 5px;
   border-bottom-right-radius: 30px 10px;
@@ -165,9 +171,17 @@ a:hover, a:focus {
   display: -webkit-flex;
   -webkit-align-items: center;
   -webkit-justify-content: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
   width: 50px;
   height: 50px;
   font-size: 150%;
@@ -175,7 +189,8 @@ a:hover, a:focus {
   color: #8e7154;
   border-radius: 5px;
   margin: 2px 0 0 2px;
-  transition: background-color 0.2s ease;
+  -webkit-transition: background-color 0.2s ease;
+          transition: background-color 0.2s ease;
   float: left;
   text-align: center; }
 
@@ -187,8 +202,8 @@ a:hover, a:focus {
   margin-left: 60px; }
 
 /*****
-	ACHIEVEMENTS GRID STYLE
-	******/
+  ACHIEVEMENTS GRID STYLE
+  ******/
 .ach-grid {
   text-align: left;
   padding-left: 6px;
@@ -222,17 +237,20 @@ a:hover, a:focus {
   margin-left: 0px; }
 
 * {
-  box-sizing: border-box; }
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box; }
 
 body {
   font-family: Droid Serif, serif;
   color: #333;
   font-size: 14px;
-  transition: background-color 0.4s ease; }
+  -webkit-transition: background-color 0.4s ease;
+          transition: background-color 0.4s ease; }
 
 header {
   border-bottom: 5px solid #EB9532;
-  box-shadow: 0 4px 2px -2px #ccc; }
+  -webkit-box-shadow: 0 4px 2px -2px #ccc;
+          box-shadow: 0 4px 2px -2px #ccc; }
 
 .page {
   width: 95%;
@@ -240,8 +258,8 @@ header {
   margin: 0 auto; }
 
 /*****
-	LABEL STYLES
-	*****/
+  LABEL STYLES
+  *****/
 .label-xs {
   display: block;
   font-size: 10px; }
@@ -268,8 +286,8 @@ header {
   color: #ccc; }
 
 /*****
-	Tooltip in grid view 
-	******/
+  Tooltip in grid view 
+  ******/
 .ach-list {
   position: relative; }
 
@@ -287,7 +305,8 @@ header {
   padding: 15px;
   border-radius: 5px;
   text-align: left;
-  box-shadow: 0 0 5px #858585; }
+  -webkit-box-shadow: 0 0 5px #858585;
+          box-shadow: 0 0 5px #858585; }
 
 .show-tooltip {
   display: block !important; }
@@ -297,8 +316,8 @@ header {
   margin-bottom: 8px; }
 
 /********
-	PAGE CONTROLS
-	*********/
+  PAGE CONTROLS
+  *********/
 .page-controls {
   text-align: center;
   padding: 6px 0; }
@@ -310,8 +329,8 @@ header {
   padding-right: 10px; }
 
 /*********
-	STATS
-	*********/
+  STATS
+  *********/
 .info-panel {
   max-width: 600px;
   margin: 0 auto;
@@ -331,8 +350,8 @@ header {
   text-align: center; }
 
 /********
-	ALERTS
-	********/
+  ALERTS
+  ********/
 .ach-alerts {
   position: fixed;
   bottom: 0;
@@ -348,9 +367,20 @@ header {
   margin: 5px auto;
   min-height: 74px;
   opacity: 1;
-  -webkit-animation: fadeAlert 5s normal forwards; }
+  -webkit-animation: fadeAlert 5s normal forwards;
+          animation: fadeAlert 5s normal forwards; }
 
-@-webkit-keyframes fadeAlert {
+@-webkit-keyframes fadeAlert{
+  0%{
+    opacity: 0; }
+  5%{
+    opacity: 1; }
+  95%{
+    opacity: 1; }
+  100%{
+    opacity: 0; } }
+
+@keyframes fadeAlert {
   0% {
     opacity: 0; }
 
@@ -372,9 +402,16 @@ header {
   position: absolute;
   left: 0;
   top: -2px;
-  -webkit-animation: indicateFadeOut 5s normal linear forwards; }
+  -webkit-animation: indicateFadeOut 5s normal linear forwards;
+          animation: indicateFadeOut 5s normal linear forwards; }
 
-@-webkit-keyframes indicateFadeOut {
+@-webkit-keyframes indicateFadeOut{
+  0%{
+    width: 100%; }
+  100%{
+    width: 0; } }
+
+@keyframes indicateFadeOut {
   0% {
     width: 100%; }
 
@@ -393,7 +430,8 @@ header {
 
 .alert-hide {
   opacity: 0;
-  -webkit-animation: none; }
+  -webkit-animation: none;
+          animation: none; }
 
 /******
   SMALL SCREENS
@@ -406,14 +444,14 @@ header {
   margin-bottom: 10px; }
 
 /*****
-	AT END
-	******/
+  AT END
+  ******/
 .display-none {
   display: none !important; }
 
 /*******
-	BIG SCREENS
-	********/
+  BIG SCREENS
+  ********/
 @media only screen and (min-width: 580px) {
   .theme-selector {
     width: initial;

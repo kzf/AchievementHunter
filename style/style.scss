@@ -159,10 +159,10 @@ header {
 	margin: 5px auto;
 	min-height: 74px;
 	opacity: 1;
-	-webkit-animation: fadeAlert 5s normal forwards;
+	animation: fadeAlert 5s normal forwards;
 }
 
-@-webkit-keyframes fadeAlert {
+@keyframes fadeAlert {
 	0% { opacity: 0; }
 	5% { opacity: 1; }
 	95% { opacity: 1; }
@@ -178,10 +178,10 @@ header {
 	position: absolute;
 	left: 0;
 	top: -2px;
-	-webkit-animation: indicateFadeOut 5s normal linear forwards;
+	animation: indicateFadeOut 5s normal linear forwards;
 }
 
-@-webkit-keyframes indicateFadeOut {
+@keyframes indicateFadeOut {
 	0% { width: 100%; }
 	100% { width: 0; }
 }
@@ -201,7 +201,7 @@ header {
 
 .alert-hide {
 	opacity: 0;
-	-webkit-animation: none;
+	animation: none;
 }
 
 /******

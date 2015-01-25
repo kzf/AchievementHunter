@@ -66,6 +66,7 @@ Achievements.give = function(a, silent) {
 
 /****
 	ALERTS
+	Control messages to be shown when achievements are earnt
 	*****/
 var Alerts = {
 	alerts: [],

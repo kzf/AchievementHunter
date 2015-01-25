@@ -155,7 +155,7 @@ a:hover, a:focus {
   left: 0px;
   width: 50px;
   height: 30px;
-  background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.05) 100%);
+  background: linear-gradient(top, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.05) 100%);
   border-top-right-radius: 5px;
   border-top-left-radius: 5px;
   border-bottom-right-radius: 30px 10px;
@@ -348,9 +348,9 @@ header {
   margin: 5px auto;
   min-height: 74px;
   opacity: 1;
-  -webkit-animation: fadeAlert 5s normal forwards; }
+  animation: fadeAlert 5s normal forwards; }
 
-@-webkit-keyframes fadeAlert {
+@keyframes fadeAlert {
   0% {
     opacity: 0; }
 
@@ -372,9 +372,9 @@ header {
   position: absolute;
   left: 0;
   top: -2px;
-  -webkit-animation: indicateFadeOut 5s normal linear forwards; }
+  animation: indicateFadeOut 5s normal linear forwards; }
 
-@-webkit-keyframes indicateFadeOut {
+@keyframes indicateFadeOut {
   0% {
     width: 100%; }
 
@@ -393,7 +393,7 @@ header {
 
 .alert-hide {
   opacity: 0;
-  -webkit-animation: none; }
+  animation: none; }
 
 /******
   SMALL SCREENS
