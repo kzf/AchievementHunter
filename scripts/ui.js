@@ -1,5 +1,8 @@
 /****
 	UI
+	Namespace for UI elements. Also handles initialising basic
+	event handlers for simple UI actions and some other miscellaneous
+	UI initialisation.
 	*****/
 var UI = {
 	/****
@@ -62,7 +65,14 @@ var UI = {
 		  	Achievements.give(Achievements.ui.stats);
 		  }),
 		reset: $("#reset-game").click(function() {
+		  	UI.warnings.resetWarning.slideDown();
+		  }),
+		resetConfirm: $("#reset-confirm").click(function() {
 		  	Storage.reset();
+		  }),
+		resetCancel: $("#reset-cancel").click(function() {
+				UI.warnings.resetWarning.slideUp();
+		  	Achievements.give(Achievements.ui.cancelReset);
 		  }),
 		prevPage: $("#prev-page").click(function(e) {
 			e.preventDefault();
@@ -97,5 +107,11 @@ var UI = {
 		  //var tooltipWrapper = $("<div>").addClass("tooltip-wrapper").append(a.tooltipEl);
 		  a.element.append(a.labelEl).append(a.tooltipEl);
 		}
+	},
+	/****
+		WARNINGS
+		****/
+	warnings: {
+		resetWarning: $("#reset-warning").hide()
 	}
 };

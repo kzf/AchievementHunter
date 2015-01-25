@@ -6,7 +6,7 @@ var Alerts = {
 	el: $(".ach-alerts"),
 	addAlert: function(ach) {
 		var b = UI.build.alert(ach.title, ach.desc, ach.label);
-		if (this.alerts.length === 3) {
+		if (this.alerts.length === 3) { // max of 3 alerts displayed at once
 			var a = this.alerts.pop();
 			clearTimeout(a.timeout);
 			a.remove();

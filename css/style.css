@@ -1,22 +1,4 @@
 @import url(http://fonts.googleapis.com/css?family=Droid+Serif);
-* {
-  box-sizing: border-box; }
-
-body {
-  font-family: Droid Serif, serif;
-  color: #333;
-  font-size: 14px;
-  transition: background-color 0.2s ease; }
-
-header {
-  border-bottom: 5px solid #EB9532;
-  box-shadow: 0 4px 2px -2px #ccc; }
-
-.page {
-  width: 95%;
-  max-width: 850px;
-  margin: 0 auto; }
-
 /******
 	DARK THEME
 	*******/
@@ -25,8 +7,46 @@ body.dark {
   background-color: #333; }
 
 body.dark header {
-  border-bottom: 5px solid darkred;
+  border-bottom: 5px solid #243662;
   box-shadow: 0 4px 2px -2px black; }
+
+body.dark a {
+  color: #90C0E8; }
+  body.dark a:hover, body.dark a:active {
+    color: #83C7FF; }
+body.dark .info-panel {
+  background: #243662; }
+body.dark .alert {
+  background: #243662; }
+body.dark .btn-link {
+  background: #182542; }
+  body.dark .btn-link:hover {
+    background: #33497B; }
+body.dark .ach-list {
+  background: #172342; }
+body.dark .achieved .ach-label {
+  border-color: #719FC5;
+  background: #5c7eb3; }
+body.dark .ach-label {
+  background: #536788;
+  border-color: #153A59;
+  color: #1A1A1A; }
+body.dark .achievement.achieved {
+  border-color: #719FC5;
+  background: #95ABCD; }
+body.dark .achievement {
+  background: #536788;
+  border-color: #153A59;
+  color: #1A1A1A; }
+body.dark .ach-grid .achievement {
+  background: none;
+  border: none; }
+body.dark .alert::before {
+  background: #95ABCD; }
+body.dark .icon-double {
+  text-shadow: 3px 5px 0px #384B79; }
+body.dark .filter-text {
+  color: #333; }
 
 /****
 	MAIN MENU
@@ -66,21 +86,22 @@ a:hover, a:focus {
   border: 1px solid #cccccc;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   outline: none;
-  width: 175px; }
+  width: 235px; }
 
 .filter-text:focus {
   box-shadow: 0 0 5px #4183d7;
   border: 1px solid #4183d7; }
 
 .btn-link {
-  background: #ccc;
+  background: #EABE8C;
+  color: #8F4D0D;
   padding: 3px 6px;
   border-radius: 10px;
   transition: all 0.25s ease; }
 
 .btn-link:hover {
   color: black;
-  background-color: #999; }
+  background-color: #EB9532; }
 
 .btn-link:active {
   background-color: #555; }
@@ -200,6 +221,24 @@ a:hover, a:focus {
 .ach-grid .ach-desc {
   margin-left: 0px; }
 
+* {
+  box-sizing: border-box; }
+
+body {
+  font-family: Droid Serif, serif;
+  color: #333;
+  font-size: 14px;
+  transition: background-color 0.4s ease; }
+
+header {
+  border-bottom: 5px solid #EB9532;
+  box-shadow: 0 4px 2px -2px #ccc; }
+
+.page {
+  width: 95%;
+  max-width: 850px;
+  margin: 0 auto; }
+
 /*****
 	LABEL STYLES
 	*****/
@@ -285,6 +324,12 @@ a:hover, a:focus {
   margin: 0;
   padding: 0; }
 
+.warning {
+  padding: 10px;
+  border-radius: 5px;
+  background: #e5816a;
+  text-align: center; }
+
 /********
 	ALERTS
 	********/
@@ -356,6 +401,10 @@ a:hover, a:focus {
 .control-label {
   display: none; }
 
+.view-controls {
+  display: block;
+  margin-bottom: 10px; }
+
 /*****
 	AT END
 	******/
@@ -379,4 +428,8 @@ a:hover, a:focus {
 
   .control-label {
     display: inline-block; }
+
+  .view-controls {
+    display: initial;
+    margin-bottom: 0; }
  }

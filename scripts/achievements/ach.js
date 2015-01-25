@@ -1,4 +1,19 @@
 /****
+	Specifying achievements.
+	Each achieveement has the following spec:
+	{
+		title: <TITLE>,
+		label: <A html snipper which provides the contents of the achievement icon>,
+		desc: <DESCRIPTION>,
+		spoiler: <ENUM:
+			0: No spoilers, Description, title and icon hidden,
+			1: Icon and title shown,
+			2: Icon, Title and Description shown
+			>
+	}
+	****/
+
+/****
 	Achievement-based Achievements
 	****/
 Achievements.achBased = {};
@@ -9,7 +24,7 @@ Achievements.achBased.consecutive = {
     spoiler: 1
 };
 
-Achievements.achMilestones = [1,5,10,25,50,75,100,125,150,200,250];
+Achievements.achMilestones = [1,5,10,25,50,75,100,125,150];
 Achievements.achMilestones.forEach(function(n) {
 	Achievements.achBased["have" + n] = {
 		title: "Earn " + n + " Achievements",
@@ -623,6 +638,13 @@ Achievements.ui.anchor = {
 	desc: "Activate an anchor.",
 	spoiler: 0
 };
+
+Achievements.ui.cancelReset = {
+	title: "Good Dog",
+	label: "<i class='fa fa-comment'></i>",
+	desc: "Listened to what you were told.",
+	spoiler: 0
+}
 Achievements.addAll(Achievements.ui);
 
 /*****

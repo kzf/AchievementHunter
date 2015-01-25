@@ -4,7 +4,7 @@
 	  <meta charset="utf-8">
 	  <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-	  <title></title>
+	  <title>Achievement Hunter</title>
 
 	  <meta name="description" content="">
 	  <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -40,7 +40,13 @@
 			<section class="info-panel display-none" id="stats">
 				<h2>Stats</h2>
 				<p>Achieved: <span id="num-achieved"></span> / <span id="total-achieved"></span></p>
-				<footer><a href="#" id="reset-game">Reset game</a></footer>
+				<footer>
+					<a href="#" id="reset-game">Reset game</a>
+					<div class="warning" id="reset-warning">
+						<p>Are you sure you want to reset your game? Fair warning, there is <strong>no</strong> achievement for resetting the game, you will simply lose your current progress. I know I may have lied before, but this time I swear it's true. DO NOT RESET!</p>
+						<a href="#" class="btn-link" id="reset-cancel">Cancel</a> <a href="#" class="btn-link" id="reset-confirm">Yes, reset my game</a>
+					</div>
+				</footer>
 			</section>
 
 			<section class="ach-list">

@@ -1,0 +1,82 @@
+/*****
+	ACHIEVEMENTS BARS STYLE
+	******/
+
+.ach-list {
+	background-color: #EB9532;
+	border-radius: 5px;
+	padding: 5px;
+	max-width: 600px;
+	margin: 0 auto;
+}
+
+.ach-view {
+	padding: 0;
+	margin: 0;
+	text-align: left;
+}
+
+.achievement {
+	display: block;
+	margin-bottom: 6px;
+	border: 2px solid #8e7154;
+  background: #eabe8c;
+  border-radius: 5px;
+  padding: 6px;
+  min-height: 72px;
+  color: #8e7154;
+}
+
+.achievement.achieved {
+	background-color: #FDE3A7;
+	border-color: #894400;
+	color: #333;
+}
+
+.achieved .ach-label {
+  background-color: orange;
+  position: relative;
+  color: #894400;
+}
+
+.achieved .ach-label::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 50px;
+  height: 30px;
+  background: -webkit-linear-gradient(top, rgba(255,255,255,0.6) 0%,rgba(255,255,255,0.05) 100%);
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+  border-bottom-right-radius: 30px 10px;
+  border-bottom-left-radius: 30px 10px;
+}
+
+.ach-label {
+	display: -webkit-flex;
+  -webkit-align-items: center;
+  -webkit-justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  font-size: 150%;
+  background: #eabe8c;
+  color: #8e7154;
+  border-radius: 5px;
+  margin: 2px 0 0 2px;
+  transition: background-color 0.2s ease;
+  float: left;
+  text-align: center;
+}
+
+.ach-title {
+	margin: 2px 0px 10px 60px;
+}
+.ach-desc {
+	display: block;
+	margin-left: 60px;
+}

@@ -1,0 +1,68 @@
+/******
+	DARK THEME
+	*******/
+
+body.dark {
+	color: #ddd;
+	background-color: #333;
+}
+
+body.dark header {
+	border-bottom: 5px solid rgb(36, 54, 98);
+	box-shadow: 0 4px 2px -2px black;
+}
+
+body.dark {
+	& a {
+		color: #90C0E8;
+		&:hover, &:active {
+			color: #83C7FF;
+		}
+	}
+	& .info-panel {
+		background: rgb(36, 54, 98);
+	}
+	& .alert {
+		background: rgb(36, 54, 98);
+	}
+	& .btn-link {
+		background: #182542;
+		&:hover {
+			background: #33497B;
+		}
+	}
+	& .ach-list {
+		background: #172342;
+	}
+	& .achieved .ach-label {
+		border-color: #719FC5;
+		background: rgb(92, 126, 179);
+	}
+	& .ach-label {
+		background: #536788;
+		border-color: #153A59;
+		color: #1A1A1A;
+	}
+	& .achievement.achieved {
+		border-color: #719FC5;
+		background: #95ABCD;
+	}
+	& .achievement {
+		background: #536788;
+		border-color: #153A59;
+		color: #1A1A1A;
+	}
+	& .ach-grid .achievement {
+		background: none;
+		border: none;
+	}
+	& .alert::before {
+		background: #95ABCD;
+	}
+	& .icon-double {
+		text-shadow: 3px 5px 0px #384B79;
+	}
+	& .filter-text {
+		color: #333;
+	}
+}

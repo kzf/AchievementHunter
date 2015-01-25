@@ -1,5 +1,6 @@
 /********
 	PAGING
+	Manages the pagination on the 'Grid' view of achievements.
 	*********/
 var Paging = {
 	grid: false,

@@ -3,14 +3,13 @@
 	*********/
 var Achievements = {
 	list: [],
-	by_id: {},
-	add: function(a, _id) {
-		a._id = _id;
+	by_id: {}, // stores achievements by their title
+	add: function(a) {
 		this.by_id[a.title] = a;
 		this.list.push(a);
 		this.total++;
 	},
-	addAll: function(o, id_prefix) {
+	addAll: function(o) {
 		for (var a in o) {
 			if (o.hasOwnProperty(a)) {
 				Achievements.add(o[a]);

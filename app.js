@@ -3,14 +3,13 @@
 	*********/
 var Achievements = {
 	list: [],
-	by_id: {},
-	add: function(a, _id) {
-		a._id = _id;
+	by_id: {}, // stores achievements by their title
+	add: function(a) {
 		this.by_id[a.title] = a;
 		this.list.push(a);
 		this.total++;
 	},
-	addAll: function(o, id_prefix) {
+	addAll: function(o) {
 		for (var a in o) {
 			if (o.hasOwnProperty(a)) {
 				Achievements.add(o[a]);
@@ -73,7 +72,7 @@ var Alerts = {
 	el: $(".ach-alerts"),
 	addAlert: function(ach) {
 		var b = UI.build.alert(ach.title, ach.desc, ach.label);
-		if (this.alerts.length === 3) {
+		if (this.alerts.length === 3) { // max of 3 alerts displayed at once
 			var a = this.alerts.pop();
 			clearTimeout(a.timeout);
 			a.remove();
@@ -153,6 +152,7 @@ jQuery.fn.fastLiveFilter = function(list, options) {
 
 /********
 	PAGING
+	Manages the pagination on the 'Grid' view of achievements.
 	*********/
 var Paging = {
 	grid: false,
@@ -240,6 +240,7 @@ var Paging = {
 
 /****
 	STORAGE
+	Manages loading and saving to localStorage
 	*****/
 var Storage = {
 	load: function() {
@@ -248,8 +249,12 @@ var Storage = {
 			if (this.local.hasOwnProperty(_id) && Achievements.by_id[_id]) {
 				Achievements.give(Achievements.by_id[_id], true);
 			}
-			Achievements.give(Achievements.ui.storage);
+			
 			// TODO: Storage2, storage4
+		}
+		console.log(this.local);
+		if (!$.isEmptyObject(this.local)) {
+			Achievements.give(Achievements.ui.storage);
 		}
 	},
 	reset: function() {
@@ -270,6 +275,9 @@ var Storage = {
 
 /****
 	UI
+	Namespace for UI elements. Also handles initialising basic
+	event handlers for simple UI actions and some other miscellaneous
+	UI initialisation.
 	*****/
 var UI = {
 	/****
@@ -332,7 +340,14 @@ var UI = {
 		  	Achievements.give(Achievements.ui.stats);
 		  }),
 		reset: $("#reset-game").click(function() {
+		  	UI.warnings.resetWarning.slideDown();
+		  }),
+		resetConfirm: $("#reset-confirm").click(function() {
 		  	Storage.reset();
+		  }),
+		resetCancel: $("#reset-cancel").click(function() {
+				UI.warnings.resetWarning.slideUp();
+		  	Achievements.give(Achievements.ui.cancelReset);
 		  }),
 		prevPage: $("#prev-page").click(function(e) {
 			e.preventDefault();
@@ -367,8 +382,29 @@ var UI = {
 		  //var tooltipWrapper = $("<div>").addClass("tooltip-wrapper").append(a.tooltipEl);
 		  a.element.append(a.labelEl).append(a.tooltipEl);
 		}
+	},
+	/****
+		WARNINGS
+		****/
+	warnings: {
+		resetWarning: $("#reset-warning").hide()
 	}
 };
+
+/****
+	Specifying achievements.
+	Each achieveement has the following spec:
+	{
+		title: <TITLE>,
+		label: <A html snipper which provides the contents of the achievement icon>,
+		desc: <DESCRIPTION>,
+		spoiler: <ENUM:
+			0: No spoilers, Description, title and icon hidden,
+			1: Icon and title shown,
+			2: Icon, Title and Description shown
+			>
+	}
+	****/
 
 /****
 	Achievement-based Achievements
@@ -381,7 +417,7 @@ Achievements.achBased.consecutive = {
     spoiler: 1
 };
 
-Achievements.achMilestones = [1,5,10,25,50,75,100,125,150,200,250];
+Achievements.achMilestones = [1,5,10,25,50,75,100,125,150];
 Achievements.achMilestones.forEach(function(n) {
 	Achievements.achBased["have" + n] = {
 		title: "Earn " + n + " Achievements",
@@ -995,6 +1031,13 @@ Achievements.ui.anchor = {
 	desc: "Activate an anchor.",
 	spoiler: 0
 };
+
+Achievements.ui.cancelReset = {
+	title: "Good Dog",
+	label: "<i class='fa fa-comment'></i>",
+	desc: "Listened to what you were told.",
+	spoiler: 0
+}
 Achievements.addAll(Achievements.ui);
 
 /*****
